@@ -1,0 +1,7 @@
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\bin\Release\Spimi.Net.Tests.dll
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\bin\Release\Spimi.Net.Tests.pdb
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\bin\Release\Spimi.Net.exe
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\bin\Release\Spimi.Net.pdb
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\obj\Release\ResolveAssemblyReference.cache
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\obj\Release\Spimi.Net.Tests.dll
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\obj\Release\Spimi.Net.Tests.pdb

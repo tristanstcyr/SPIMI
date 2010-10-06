@@ -1,0 +1,5 @@
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net\bin\Release\Spimi.Net.exe
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net\bin\Release\Spimi.Net.pdb
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net\obj\x86\Release\ResolveAssemblyReference.cache
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net\obj\x86\Release\Spimi.Net.exe
+c:\users\tristan\documents\visual studio 2010\Projects\Spimi.Net\Spimi.Net\obj\x86\Release\Spimi.Net.pdb
