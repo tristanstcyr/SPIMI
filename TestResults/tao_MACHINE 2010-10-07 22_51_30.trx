@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<TestRun id="f0207e20-4cf1-4b64-956f-788117b8891e" name="tao@MACHINE 2010-10-07 22:51:30" runUser="machine\tao" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <TestSettings name="Local" id="bf1adf85-08e7-4fff-81f7-4b72055c7bcf">
+    <Description>These are default test settings for a local test run.</Description>
+    <Deployment enabled="false" runDeploymentRoot="tao_MACHINE 2010-10-07 22_51_30">
+      <DeploymentItem filename="C:\dev\concordia\spimi\SPIMI\Spimi\bin\Debug\Spimi.exe" />
+      <DeploymentItem filename="C:\dev\concordia\spimi\SPIMI\SpimiTests\lib\Moq\Moq.dll" />
+    </Deployment>
+    <Execution>
+      <TestTypeSpecific />
+      <AgentRule name="Execution Agents">
+      </AgentRule>
+    </Execution>
+  </TestSettings>
+  <Times creation="2010-10-07T22:51:30.2549692-04:00" queuing="2010-10-07T22:51:32.9370958-04:00" start="2010-10-07T22:51:33.0691034-04:00" finish="2010-10-07T22:51:33.8171110-04:00" />
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" error="0" failed="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+  </ResultSummary>
+  <TestDefinitions>
+    <UnitTest name="Test" storage="c:\dev\concordia\spimi\spimi\spimitests\bin\debug\spimitests.dll" id="4d651238-c538-080d-a595-5615a556a609">
+      <Execution id="aa83d696-7db9-4d6e-b08b-e5e3b28e5379" />
+      <TestMethod codeBase="C:/dev/concordia/spimi/SPIMI/SpimiTests/bin/Debug/SpimiTests.DLL" adapterTypeName="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestAdapter, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.Adapter, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" className="Concordia.Spimi.Net.Tests.TokenizerTest, SpimiTests, Version=1.0.0.0, Culture=neutral, PublicKeyToken=153cbfdd2e3353e2" name="Test" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestLists>
+    <TestList name="Results Not in a List" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="All Loaded Results" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <TestEntries>
+    <TestEntry testId="4d651238-c538-080d-a595-5615a556a609" executionId="aa83d696-7db9-4d6e-b08b-e5e3b28e5379" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <Results>
+    <UnitTestResult executionId="aa83d696-7db9-4d6e-b08b-e5e3b28e5379" testId="4d651238-c538-080d-a595-5615a556a609" testName="Test" computerName="MACHINE" duration="00:00:00.0414511" startTime="2010-10-07T22:51:33.1721092-04:00" endTime="2010-10-07T22:51:33.7371109-04:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa83d696-7db9-4d6e-b08b-e5e3b28e5379">
+    </UnitTestResult>
+  </Results>
+</TestRun>

@@ -64,10 +64,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArticleParser.cs" />
+    <Compile Include="Document.cs" />
+    <Compile Include="DocumentIndex.cs" />
     <Compile Include="FileIndex.cs" />
     <Compile Include="FileIndexWriter.cs" />
     <Compile Include="IIndex.cs" />
     <Compile Include="ILexer.cs" />
+    <Compile Include="IParser.cs" />
     <Compile Include="MemoryIndex.cs" />
     <Compile Include="PostingList.cs" />
     <Compile Include="SpimiCli.cs" />

@@ -20,3 +20,13 @@ C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi\SpimiTests\bin\Debu
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi\SpimiTests\obj\Debug\ResolveAssemblyReference.cache
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi\SpimiTests\obj\Debug\SpimiTests.dll
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi\SpimiTests\obj\Debug\SpimiTests.pdb
+C:\dev\concordia\spimi\SPIMI\SpimiTests\obj\Debug\ResolveAssemblyReference.cache
+C:\dev\concordia\spimi\SPIMI\SpimiTests\bin\Debug\TestData\LoremIpsum.txt
+C:\dev\concordia\spimi\SPIMI\SpimiTests\bin\Debug\SpimiTests.dll
+C:\dev\concordia\spimi\SPIMI\SpimiTests\bin\Debug\SpimiTests.pdb
+C:\dev\concordia\spimi\SPIMI\SpimiTests\bin\Debug\Moq.dll
+C:\dev\concordia\spimi\SPIMI\SpimiTests\bin\Debug\Spimi.exe
+C:\dev\concordia\spimi\SPIMI\SpimiTests\bin\Debug\Spimi.pdb
+C:\dev\concordia\spimi\SPIMI\SpimiTests\bin\Debug\Moq.xml
+C:\dev\concordia\spimi\SPIMI\SpimiTests\obj\Debug\SpimiTests.dll
+C:\dev\concordia\spimi\SPIMI\SpimiTests\obj\Debug\SpimiTests.pdb

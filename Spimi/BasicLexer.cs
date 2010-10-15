@@ -17,14 +17,11 @@ namespace Concordia.Spimi
             }
         }
 
-
-        public IEnumerable<string> tokenize(Stream stream)
-        {
-            StreamReader reader = new StreamReader(stream);
+        public IEnumerable<string> tokenize(string document)
+        {   
             StringBuilder token = new StringBuilder();
-            while (!reader.EndOfStream)
+            foreach(char character in document.ToCharArray()) 
             {
-                char character = (char)reader.Read();
                 if (ignoreList.Contains(character))
                 {
                     if (token.Length > 0)

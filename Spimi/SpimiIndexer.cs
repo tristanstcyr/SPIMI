@@ -10,6 +10,8 @@ namespace Concordia.Spimi
 
         ILexer lexer;
 
+        IParser parser;
+
         List<string> blockFilePaths = new List<string>();
 
         SpimiBlockWriter blockWriter;
@@ -18,22 +20,34 @@ namespace Concordia.Spimi
 
         FileIndexWriter fileIndexWriter;
 
-        public SpimiIndexer(ILexer lexer)
+        DocumentIndex docIndex;
+
+        public SpimiIndexer(ILexer lexer, IParser parser, DocumentIndex docIndex)
         {
             this.lexer = lexer;
+            this.parser = parser;
             this.blockReader = new SpimiBlockReader();
             this.blockWriter = new SpimiBlockWriter();
             this.fileIndexWriter = new FileIndexWriter();
+            this.docIndex = docIndex;
         }
 
-        public void Index(string docId, Stream document)
+        public void CreateIndexBlocks(string filePath, Stream file)
         {
-            foreach (string term in lexer.tokenize(document))
+            // Each file holds many documents: we need to parse them out first.
+            foreach (Document document in parser.scrub(file))
             {
-                blockWriter.AddPosting(term, docId);
-                if (blockWriter.Postings == maxPostingCountPerBlock)
+                // Keep track of in which file each document is
+                //docIndex.FilePaths.Add(document.DocId, filePath);
+
+                // Extract the terms from the document
+                foreach (string term in lexer.tokenize(document.Body))
                 {
-                    this.FlushBlockWriter();
+                    blockWriter.AddPosting(term, document.DocId);
+                    if (blockWriter.Postings == maxPostingCountPerBlock)
+                    {
+                        this.FlushBlockWriter();
+                    }
                 }
             }
         }
@@ -44,7 +58,7 @@ namespace Concordia.Spimi
             blockFilePaths.Add(blockFilePath);
         }
 
-        public void CreateIndex(Stream stream)
+        public void MergeIndexBlocks(Stream stream)
         {
             if (blockWriter.Postings > 0)
                 FlushBlockWriter();
