@@ -3,44 +3,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Text.RegularExpressions;
 
 namespace Concordia.Spimi
 {
     class ArticleParser : IParser
     {
-        public IEnumerable<Document> scrub(Stream file)
+        private Regex skipRegex = new Regex("<!DOCTYPE|</TOPICS>|<TOPICS>|<PLACES>|<PLACES>|<PEOPLE>|</PEOPLE>|<ORGS>|</ORGS>|<EXCHANGES>|</EXCHANGES>|<COMPANIES>|</COMPANIES>|<UNKNOWN>|</UNKNOWN>|<TEXT>|</TEXT>|</BODY>");
+        private Regex markupRegex = new Regex("&#\\d*\\;|<DATE>|</DATE>|<D>|</D>|<TITLE>|</TITLE>|<DATELINE>|</DATELINE><BODY>");
+
+        public IEnumerable<Document> ExtractDocuments(Stream file)
         {
-            StreamReader reader = new StreamReader(file);
-            Document doc = null;
-            while (!reader.EndOfStream)
+            using (StreamReader reader = new StreamReader(file))
             {
-                string line = reader.ReadLine();
-                if (line.Contains("<REUTERS TOPICS"))    // start of a new document
+                StringBuilder bodyBuilder = new StringBuilder();
+                string docId = "";
+                bool inADoc = false;
+                while (!reader.EndOfStream)
                 {
-                    doc = new Document();
-                    doc.DocId = GetDocId(line);
-                }
-                else if (line.Contains("</REUTERS>"))    // end of a document
-                {
-                    yield return doc;
-                }
-                else if (line.Contains("<!DOCTYPE") ||       // lines that can be skipped because they have no content
-                            line.Contains("</TOPICS>") || line.Contains("<TOPICS>") ||
-                            line.Contains("<PLACES>") || line.Contains("<PLACES>") ||
-                            line.Contains("<PEOPLE>") || line.Contains("</PEOPLE>") ||
-                            line.Contains("<ORGS>") || line.Contains("</ORGS>") ||
-                            line.Contains("<EXCHANGES>") || line.Contains("</EXCHANGES>") ||
-                            line.Contains("<COMPANIES>") || line.Contains("</COMPANIES>") ||
-                            line.Contains("<UNKNOWN>") || line.Contains("</UNKNOWN>") ||
-                            line.Contains("<TEXT>") || line.Contains("</TEXT>") ||
-                            line.Contains("</BODY>"))
-                {
-                    continue;
-                }
-                else if (doc != null)   // regular line to include in the document
-                {
-                    string cleanLine = ScrubOutMarkup(line);
-                    doc.Body = doc.Body + cleanLine;
+                    string line = reader.ReadLine();
+                    if (line.Contains("<REUTERS TOPICS"))    // start of a new document
+                    {
+                        docId = GetDocId(line);
+                        inADoc = true;
+                    }
+                    else if (line.Contains("</REUTERS>"))    // end of a document
+                    {
+                        inADoc = false;
+                        string body = bodyBuilder.ToString().ToLower();
+                        bodyBuilder.Clear();
+                        yield return new Document(docId, body);
+                    }
+                    else if (skipRegex.IsMatch(line))   // lines that can be skipped because they have no content
+                    {
+                        continue;
+                    }
+                    else if (inADoc)   // regular line to include in the document
+                    {
+                        string cleanLine = ScrubOutMarkup(line);
+                        bodyBuilder.Append(cleanLine);
+                    }
                 }
             }
         }
@@ -55,10 +57,13 @@ namespace Concordia.Spimi
 
         private string ScrubOutMarkup(string line)
         {
-            return line.Replace("<DATE>", "").Replace("</DATE>", "")
-                .Replace("<D>", "").Replace("</D>", "")
-                .Replace("<TITLE>", "").Replace("</TITLE>", "")
-                .Replace("<DATELINE>", "").Replace("</DATELINE><BODY>", "");
+            Match match = markupRegex.Match(line);
+            while (match.Success)
+            {
+                line = line.Remove(match.Index, match.Length);
+                match = markupRegex.Match(line);
+            }
+            return line;
         }
 
     }

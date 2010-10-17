@@ -8,6 +8,6 @@ namespace Concordia.Spimi
 {
     interface IParser
     {
-        IEnumerable<Document> scrub(Stream file);
+        IEnumerable<Document> ExtractDocuments(Stream file);
     }
 }

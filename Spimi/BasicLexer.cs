@@ -20,7 +20,7 @@ namespace Concordia.Spimi
         public IEnumerable<string> tokenize(string document)
         {   
             StringBuilder token = new StringBuilder();
-            foreach(char character in document.ToCharArray()) 
+            foreach(char character in document) 
             {
                 if (ignoreList.Contains(character))
                 {

@@ -66,7 +66,6 @@
   <ItemGroup>
     <Compile Include="ArticleParser.cs" />
     <Compile Include="Document.cs" />
-    <Compile Include="DocumentIndex.cs" />
     <Compile Include="FileIndex.cs" />
     <Compile Include="FileIndexWriter.cs" />
     <Compile Include="IIndex.cs" />

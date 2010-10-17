@@ -19,17 +19,16 @@ namespace Concordia.Spimi
             string indexFilePath = args[1];
 
             Console.WriteLine("Welcome to Spimi!");
-            Console.WriteLine("Parsing corpus and creating index blocks..");
-            DocumentIndex docIndex = new DocumentIndex();
-            SpimiIndexer indexer = new SpimiIndexer(new BasicLexer(), new ArticleParser(), docIndex);
+            Console.WriteLine("Parsing corpus and creating index blocks...");
+            SpimiIndexer indexer = new SpimiIndexer(new BasicLexer(), new ArticleParser());
             
             DirectoryInfo dir = new DirectoryInfo(directory);
             foreach(FileInfo file in dir.GetFiles().Where(f => f.Extension.Equals(".sgm")))
-                indexer.CreateIndexBlocks(file.FullName, file.Open(FileMode.Open));
+                indexer.Index(file.Name, file.Open(FileMode.Open));
             
             using (FileStream indexFileStream = File.Open(indexFilePath, FileMode.Create))
             {
-                Console.WriteLine("Merging blocks into one index..");
+                Console.WriteLine("Merging blocks into one index...");
                 indexer.MergeIndexBlocks(indexFileStream);
 
                 FileIndex index = FileIndex.Open(indexFileStream);
@@ -41,7 +40,7 @@ namespace Concordia.Spimi
                     string query = Console.ReadLine();
                     foreach (string docId in queryEngine.Query(query.ToLower()))
                     {
-                        Console.WriteLine(docId /*+ " in " + docIndex.FilePaths[docId]*/);
+                        Console.WriteLine(docId + " in " + indexer.FilePathForDocId(docId));
                     }
                 }
             }

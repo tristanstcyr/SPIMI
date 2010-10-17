@@ -26,11 +26,11 @@ namespace Concordia.SpimiTests
         [DeploymentItem(@"LoremIpsum.txt")]
         public void TestLargeIndex()
         {
-            SpimiIndexer spimi = new SpimiIndexer(new BasicLexer());
+            SpimiIndexer spimi = new SpimiIndexer(new BasicLexer(), new ArticleParser());
 
             MemoryStream indexStream = new MemoryStream();
-            spimi.CreateIndexBlocks("TestData1", GetStream(TestData1));
-            spimi.CreateIndexBlocks("TestData2", GetStream(TestData2));
+            spimi.Index("TestData1", GetStream(TestData1));
+            spimi.Index("TestData2", GetStream(TestData2));
             spimi.MergeIndexBlocks(indexStream);
             FileIndex index = FileIndex.Open(indexStream);
             PostingList list = index.GetPostingList("sit");

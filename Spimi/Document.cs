@@ -7,7 +7,13 @@ namespace Concordia.Spimi
 {
     class Document
     {
-        public string DocId { get; set; }
-        public string Body { get; set; }
+        public Document(string docId, string body)
+        {
+            DocId = docId;
+            Body = body;
+        }
+
+        public string DocId { get; private set; }
+        public string Body { get; private set; }
     }
 }

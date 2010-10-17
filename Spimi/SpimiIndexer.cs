@@ -14,31 +14,36 @@ namespace Concordia.Spimi
 
         List<string> blockFilePaths = new List<string>();
 
+        Dictionary<int, string> documentMap = new Dictionary<int, string>();
+
         SpimiBlockWriter blockWriter;
 
         SpimiBlockReader blockReader;
 
         FileIndexWriter fileIndexWriter;
-
-        DocumentIndex docIndex;
-
-        public SpimiIndexer(ILexer lexer, IParser parser, DocumentIndex docIndex)
+        
+        public SpimiIndexer(ILexer lexer, IParser parser)
         {
             this.lexer = lexer;
             this.parser = parser;
             this.blockReader = new SpimiBlockReader();
             this.blockWriter = new SpimiBlockWriter();
             this.fileIndexWriter = new FileIndexWriter();
-            this.docIndex = docIndex;
         }
 
-        public void CreateIndexBlocks(string filePath, Stream file)
+        public void Index(string filePath, Stream file)
         {
+            bool gotFirstDocIdInFile = false;
             // Each file holds many documents: we need to parse them out first.
-            foreach (Document document in parser.scrub(file))
+            foreach (Document document in parser.ExtractDocuments(file))
             {
-                // Keep track of in which file each document is
-                //docIndex.FilePaths.Add(document.DocId, filePath);
+                if (!gotFirstDocIdInFile)
+                {
+                    // Keep track of in which file what the start docId is for
+                    // easier query result retrieval
+                    documentMap.Add(int.Parse(document.DocId), filePath);
+                    gotFirstDocIdInFile = true;
+                }
 
                 // Extract the terms from the document
                 foreach (string term in lexer.tokenize(document.Body))
@@ -64,6 +69,21 @@ namespace Concordia.Spimi
                 FlushBlockWriter();
             List<IEnumerator<PostingList>> openedBlocks = blockReader.OpenBlocks(this.blockFilePaths);
             fileIndexWriter.Write(stream,  blockReader.BeginBlockMerge(openedBlocks));
+        }
+
+        public string FilePathForDocId(string docId)
+        {
+            int docIdInt = int.Parse(docId);
+            int lastDocId = 1;
+            foreach(int key in documentMap.Keys.OrderBy(k => k))
+            {
+                if (key > docIdInt)
+                    return documentMap[lastDocId];
+                else if (key == docIdInt)
+                    return documentMap[key];
+                lastDocId = key;
+            }
+            return documentMap[lastDocId];
         }
     }
 }
