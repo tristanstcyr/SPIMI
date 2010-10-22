@@ -2,7 +2,6 @@
 using Concordia.Spimi;
 using System.IO;
 using System.Text;
-using Moq;
 using System.Collections.Generic;
 
 namespace Concordia.SpimiTests
