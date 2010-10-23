@@ -14,11 +14,10 @@ namespace Concordia.Spimi.Net.Tests
         [TestMethod]
         public void BasicLexer_ShouldBeSane()
         {
-            //BasicLexer tokenizer = new BasicLexer();
-            //Stream stream = new MemoryStream(ASCIIEncoding.ASCII.GetBytes("hello    \n\tworld"));
-            //string[] result = tokenizer.tokenize(stream).ToArray();
-            //Assert.AreEqual("hello", result[0]);
-            //Assert.AreEqual("world", result[1]);
+            BasicLexer tokenizer = new BasicLexer();
+            string[] result = tokenizer.tokenize("hello    \n\tworld").ToArray();
+            Assert.AreEqual("hello", result[0]);
+            Assert.AreEqual("world", result[1]);
         }
 
         [TestMethod]

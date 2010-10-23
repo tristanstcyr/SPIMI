@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Concordia.Spimi
 {
+    /// <summary>
+    /// Specialist class in charge of creating and storing the intermediate inverted index blocks.
+    /// </summary>
     class SpimiBlockWriter
     {
         Dictionary<string, HashSet<string>> postingLists = new Dictionary<string, HashSet<string>>();

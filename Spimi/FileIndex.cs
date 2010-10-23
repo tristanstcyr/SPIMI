@@ -6,7 +6,9 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Concordia.Spimi
 {
-
+    /// <summary>
+    /// The final merged index can be used through this class.
+    /// </summary>
     class FileIndex : IIndex
     {
         public const int PointerByteSize = sizeof(Int64);

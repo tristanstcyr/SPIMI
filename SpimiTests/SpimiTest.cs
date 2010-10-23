@@ -26,7 +26,7 @@ namespace Concordia.SpimiTests
         [DeploymentItem(@"LoremIpsum.txt")]
         public void TestLargeIndex()
         {
-            SpimiIndexer spimi = new SpimiIndexer(new BasicLexer(), new ArticleParser());
+            SpimiIndexer spimi = new SpimiIndexer(new BasicLexer(), new ReutersParser());
 
             MemoryStream indexStream = new MemoryStream();
             spimi.Index("TestData1", GetStream(TestData1));

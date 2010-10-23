@@ -6,8 +6,16 @@ using System.IO;
 
 namespace Concordia.Spimi
 {
+    /// <summary>
+    /// Creates the FileIndex.
+    /// </summary>
     class FileIndexWriter
     {
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="termEntriesStream"></param>
+        /// <param name="postingLists"></param>
         public void Write(Stream termEntriesStream, IEnumerable<PostingList> postingLists)
         {
             // +-----------------------------------------------------------------------------------------+

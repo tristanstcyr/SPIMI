@@ -64,7 +64,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArticleParser.cs" />
+    <Compile Include="ReutersParser.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="FileIndex.cs" />
     <Compile Include="FileIndexWriter.cs" />

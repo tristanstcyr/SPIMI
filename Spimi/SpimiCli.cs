@@ -5,6 +5,9 @@ using System.Linq;
 
 namespace Concordia.Spimi
 {
+    /// <summary>
+    /// Driver class of the SPIMI project.
+    /// </summary>
     public class SpimiCli
     {
         public static void Main(string[] args)
@@ -19,8 +22,10 @@ namespace Concordia.Spimi
             string indexFilePath = args[1];
 
             Console.WriteLine("Welcome to Spimi!");
+
+            // 1- Index the corpus
             Console.WriteLine("Parsing corpus and creating index blocks...");
-            SpimiIndexer indexer = new SpimiIndexer(new BasicLexer(), new ArticleParser());
+            SpimiIndexer indexer = new SpimiIndexer(new BasicLexer(), new ReutersParser());
             
             DirectoryInfo dir = new DirectoryInfo(directory);
             foreach(FileInfo file in dir.GetFiles().Where(f => f.Extension.Equals(".sgm")))
@@ -28,9 +33,11 @@ namespace Concordia.Spimi
             
             using (FileStream indexFileStream = File.Open(indexFilePath, FileMode.Create))
             {
+                // 2- Build the final index
                 Console.WriteLine("Merging blocks into one index...");
                 indexer.MergeIndexBlocks(indexFileStream);
 
+                // 3- Query the index
                 FileIndex index = FileIndex.Open(indexFileStream);
                 QueryEngine queryEngine = new QueryEngine(index);
                 Console.WriteLine("Done! Please query the corpus:");
@@ -38,10 +45,12 @@ namespace Concordia.Spimi
                 {
                     Console.Write("> ");
                     string query = Console.ReadLine();
-                    foreach (string docId in queryEngine.Query(query.ToLower()))
+                    IList<string> results = queryEngine.Query(query.ToLower());
+                    foreach (string docId in results)
                     {
                         Console.WriteLine(docId + " in " + indexer.FilePathForDocId(docId));
                     }
+                    Console.WriteLine(results.Count + " hit(s).");
                 }
             }
         }

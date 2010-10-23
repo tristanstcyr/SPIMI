@@ -17,3 +17,8 @@ C:\dev\concordia\spimi\SPIMI\Spimi\bin\Debug\Spimi.pdb
 C:\dev\concordia\spimi\SPIMI\Spimi\obj\x86\Debug\ResolveAssemblyReference.cache
 C:\dev\concordia\spimi\SPIMI\Spimi\obj\x86\Debug\Spimi.exe
 C:\dev\concordia\spimi\SPIMI\Spimi\obj\x86\Debug\Spimi.pdb
+C:\dev\concordia\479\spimi\SPIMI\Spimi\obj\x86\Debug\Spimi.exe
+C:\dev\concordia\479\spimi\SPIMI\Spimi\obj\x86\Debug\Spimi.pdb
+C:\dev\concordia\479\spimi\SPIMI\Spimi\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\dev\concordia\479\spimi\SPIMI\Spimi\bin\Debug\Spimi.exe
+C:\dev\concordia\479\spimi\SPIMI\Spimi\bin\Debug\Spimi.pdb

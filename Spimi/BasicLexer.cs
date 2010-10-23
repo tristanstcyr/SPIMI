@@ -4,6 +4,9 @@ using System.Text;
 
 namespace Concordia.Spimi
 {
+    /// <summary>
+    /// Lexer that can read and tokenize a document
+    /// </summary>
     class BasicLexer : ILexer
     {
         HashSet<char> ignoreList = new HashSet<char>();
@@ -17,6 +20,11 @@ namespace Concordia.Spimi
             }
         }
 
+        /// <summary>
+        /// Iterator that builds tokens from the inputted document, and returns them as they are built.
+        /// </summary>
+        /// <param name="document">The document to tokenize</param>
+        /// <returns>Returns lowercase tokens, one at a time as soon as they are read</returns>
         public IEnumerable<string> tokenize(string document)
         {   
             StringBuilder token = new StringBuilder();

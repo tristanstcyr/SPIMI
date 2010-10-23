@@ -7,11 +7,19 @@ using System.Text.RegularExpressions;
 
 namespace Concordia.Spimi
 {
-    class ArticleParser : IParser
+    /// <summary>
+    /// Simple specialized parser that can extract individual documents from a Reuters21578 corpus file
+    /// </summary>
+    class ReutersParser : IParser
     {
         private Regex skipRegex = new Regex("<!DOCTYPE|</TOPICS>|<TOPICS>|<PLACES>|<PLACES>|<PEOPLE>|</PEOPLE>|<ORGS>|</ORGS>|<EXCHANGES>|</EXCHANGES>|<COMPANIES>|</COMPANIES>|<UNKNOWN>|</UNKNOWN>|<TEXT>|</TEXT>|</BODY>");
         private Regex markupRegex = new Regex("&#\\d*\\;|<DATE>|</DATE>|<D>|</D>|<TITLE>|</TITLE>|<DATELINE>|</DATELINE><BODY>");
 
+        /// <summary>
+        /// An iterator that extracts and cleans up one Reuters document at a time from the inputted file
+        /// </summary>
+        /// <param name="file">An opened Reuters21578-formatted file stream</param>
+        /// <returns>Returns one document at a time as they a scanned and scrubbed</returns>
         public IEnumerable<Document> ExtractDocuments(Stream file)
         {
             using (StreamReader reader = new StreamReader(file))
@@ -32,7 +40,7 @@ namespace Concordia.Spimi
                         inADoc = false;
                         string body = bodyBuilder.ToString().ToLower();
                         bodyBuilder.Clear();
-                        yield return new Document(docId, body);
+                        yield return new Document(docId, body);     // return the document to the calling iterating code
                     }
                     else if (skipRegex.IsMatch(line))   // lines that can be skipped because they have no content
                     {

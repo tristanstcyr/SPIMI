@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Concordia.Spimi
 {
+    /// <summary>
+    /// Specialist class in charge of reading and enabling the merging of intermediate inverted indexes.
+    /// </summary>
     class SpimiBlockReader
     {
         /// <remarks> Keeps file open until all postings have been read</remarks>
