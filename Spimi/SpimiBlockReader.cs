@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System;
 
 namespace Concordia.Spimi
 {
@@ -20,10 +23,12 @@ namespace Concordia.Spimi
                 {
                     string term = reader.ReadString();
                     int postingCount = reader.ReadInt32();
-                    List<string> postings = new List<string>(postingCount);
+                    List<Posting> postings = new List<Posting>(postingCount);
                     for (int postingIndex = 0; postingIndex < postingCount; postingIndex++)
                     {
-                        postings.Add(reader.ReadString());
+                        string documentId = reader.ReadString();
+                        Int32 frequency = reader.ReadInt32();
+                        postings.Add(new Posting(documentId, frequency));
                     }
 
                     yield return new PostingList(term, postings);
@@ -69,16 +74,29 @@ namespace Concordia.Spimi
                 // Return the next posting list
                 if (minimums.Count > 1)
                 {
-                    // Merge posting listss
-                    string minimumTerm = minimums[0].Current.Term;
-                    HashSet<string> mergedPostingList = new HashSet<string>();
+                    // Merge posting lists
+                    string term = minimums[0].Current.Term;
+                    
+                    // DocumentId -> Posting
+                    Dictionary<string, Posting> mergedPostingList = new Dictionary<string, Posting>();
+
                     foreach (IEnumerator<PostingList> postingListEnum in minimums)
                     {
                         PostingList postingList = postingListEnum.Current;
-                        foreach (string posting in postingList.Postings)
-                            mergedPostingList.Add(posting);
+                        foreach (Posting posting in postingList.Postings)
+                        {
+                            Posting previousPosting;
+                            if (!mergedPostingList.TryGetValue(posting.DocumentId, out previousPosting))
+                            {
+                                mergedPostingList.Add(posting.DocumentId, posting);
+                            }
+                            else
+                            {
+                                previousPosting.Frequency += posting.Frequency;
+                            }
+                        }
                     }
-                    yield return new PostingList(minimumTerm, mergedPostingList.ToList());
+                    yield return new PostingList(term, mergedPostingList.Values.ToList());
                 }
                 else
                 {

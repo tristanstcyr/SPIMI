@@ -8,3 +8,11 @@ C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net.Tests
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\obj\Release\ResolveAssemblyReference.cache
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\obj\Release\SpimiTests.dll
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net.Tests\obj\Release\SpimiTests.pdb
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\obj\Release\ResolveAssemblyReference.cache
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\bin\Release\TestData\LoremIpsum.txt
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\bin\Release\SpimiTests.dll
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\bin\Release\SpimiTests.pdb
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\bin\Release\Spimi.exe
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\bin\Release\Spimi.pdb
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\obj\Release\SpimiTests.dll
+C:\Users\tristan\Documents\SPIMI2\SPIMI\SpimiTests\obj\Release\SpimiTests.pdb

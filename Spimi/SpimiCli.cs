@@ -45,10 +45,10 @@ namespace Concordia.Spimi
                 {
                     Console.Write("> ");
                     string query = Console.ReadLine();
-                    IList<string> results = queryEngine.Query(query.ToLower());
-                    foreach (string docId in results)
+                    IList<Posting> results = queryEngine.Query(query.ToLower());
+                    foreach (Posting posting in results)
                     {
-                        Console.WriteLine(docId + " in " + indexer.FilePathForDocId(docId));
+                        Console.WriteLine(posting.DocumentId + " "+posting.Frequency+" times in " + indexer.FilePathForDocId(posting.DocumentId));
                     }
                     Console.WriteLine(results.Count + " hit(s).");
                 }

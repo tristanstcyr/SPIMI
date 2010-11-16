@@ -2,8 +2,8 @@
 using Concordia.Spimi;
 using System.IO;
 using System.Text;
-using Moq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace Concordia.SpimiTests
 {
@@ -28,6 +28,12 @@ namespace Concordia.SpimiTests
         {
             SpimiIndexer spimi = new SpimiIndexer(new BasicLexer(), new ReutersParser());
 
+            int sitTestData1Ocurrences = 
+                new Regex("sit", RegexOptions.IgnoreCase).Matches(TestData1).Count;
+            int sitTestData2Ocurrences = 
+                new Regex("sit", RegexOptions.IgnoreCase).Matches(TestData2).Count;
+
+
             MemoryStream indexStream = new MemoryStream();
             spimi.Index("TestData1", GetStream(TestData1));
             spimi.Index("TestData2", GetStream(TestData2));
@@ -35,8 +41,8 @@ namespace Concordia.SpimiTests
             FileIndex index = FileIndex.Open(indexStream);
             PostingList list = index.GetPostingList("sit");
             Assert.AreEqual("sit", list.Term);
-            Assert.AreEqual("TestData1", list.Postings[0]);
-            Assert.AreEqual("TestData2", list.Postings[1]);
+            Assert.AreEqual(new Posting("TestData1", sitTestData1Ocurrences), list.Postings[0]);
+            Assert.AreEqual(new Posting("TestData2", sitTestData2Ocurrences), list.Postings[1]);
         }
 
         Stream GetStream(string str)
