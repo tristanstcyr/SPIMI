@@ -18,16 +18,16 @@ namespace Concordia.SpimiTests
             string filePath = writer.FlushToFile();
 
             SpimiBlockReader reader = new SpimiBlockReader();
-            IEnumerable<PostingList> postingLists = reader.Read(filePath);
-            IEnumerator<PostingList> enumerator = postingLists.GetEnumerator();
-            Assert.AreEqual(true, enumerator.MoveNext());
-            Assert.AreEqual("aTerm", enumerator.Current.Term);
-            Assert.AreEqual("aDoc", enumerator.Current.Postings[0]);
-            Assert.AreEqual("bDoc", enumerator.Current.Postings[1]);
-            Assert.AreEqual(true, enumerator.MoveNext());
+            IEnumerator<PostingList> postingLists = reader.Read(filePath).GetEnumerator();
+            Assert.AreEqual(true, postingLists.MoveNext());
+            Assert.AreEqual("aTerm", postingLists.Current.Term);
+            Assert.AreEqual(2, postingLists.Current.Postings.Count);
+            Assert.AreEqual(new Posting("aDoc", 1), postingLists.Current.Postings[0]);
+            Assert.AreEqual(new Posting("bDoc", 1), postingLists.Current.Postings[1]);
+            Assert.AreEqual(true, postingLists.MoveNext());
 
-            Assert.AreEqual("bTerm", enumerator.Current.Term);
-            Assert.AreEqual("aDoc", enumerator.Current.Postings[0]);
+            Assert.AreEqual("bTerm", postingLists.Current.Term);
+            Assert.AreEqual(new Posting("aDoc", 1), postingLists.Current.Postings[0]);
         }
 
         [TestMethod]
@@ -56,21 +56,21 @@ namespace Concordia.SpimiTests
                 PostingList postingList = merged.Current;
                 Assert.AreEqual("aTerm", postingList.Term);
                 Assert.AreEqual(3, postingList.Postings.Count);
-                Assert.AreEqual("aDoc", postingList.Postings[0]);
-                Assert.AreEqual("bDoc", postingList.Postings[1]);
-                Assert.AreEqual("zDoc", postingList.Postings[2]);
+                Assert.AreEqual(new Posting("aDoc", 1), postingList.Postings[0]);
+                Assert.AreEqual(new Posting("bDoc", 1), postingList.Postings[1]);
+                Assert.AreEqual(new Posting("zDoc", 1), postingList.Postings[2]);
 
                 Assert.IsTrue(merged.MoveNext());
                 postingList = merged.Current;
                 Assert.AreEqual("bTerm", postingList.Term);
                 Assert.AreEqual(1, postingList.Postings.Count);
-                Assert.AreEqual("aDoc", postingList.Postings[0]);
+                Assert.AreEqual(new Posting("aDoc", 2), postingList.Postings[0]);
 
                 Assert.IsTrue(merged.MoveNext());
                 postingList = merged.Current;
                 Assert.AreEqual("cTerm", postingList.Term);
                 Assert.AreEqual(1, postingList.Postings.Count);
-                Assert.AreEqual("dDoc", postingList.Postings[0]);
+                Assert.AreEqual(new Posting("dDoc", 1), postingList.Postings[0]);
 
                 Assert.IsFalse(merged.MoveNext());
             }

@@ -9,7 +9,7 @@ namespace Concordia.Spimi
     class QueryEngine
     {
         IIndex index;
-        List<string> queryPostings = new List<string>();
+        List<Posting> queryPostings = new List<Posting>();
 
         public QueryEngine(IIndex index)
         {
@@ -22,7 +22,7 @@ namespace Concordia.Spimi
         /// of those terms' postings lists are returned (i.e. the query string
         /// is interpreted as and "AND"-query)
         /// </summary>
-        public IList<string> Query(string query)
+        public IList<Posting> Query(string query)
         {
             string[] terms = query.Split(' ', '\t');
 
@@ -37,7 +37,7 @@ namespace Concordia.Spimi
                 {
                     if (i != 0)
                     {
-                        List<string> andTermPostings = index.GetPostingList(andTerm).Postings;
+                        IList<Posting> andTermPostings = index.GetPostingList(andTerm).Postings;
                         queryPostings = queryPostings.Intersect(andTermPostings).ToList();
                     }
                     i++;

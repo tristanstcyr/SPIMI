@@ -56,11 +56,14 @@ namespace Concordia.Spimi
                 if (comparison == 0)
                 {
                     // Read the postings
-                    List<string> postings = new List<string>();
+                    List<Posting> postings = new List<Posting>();
                     for (int postingIndex = 0; postingIndex < frequency; postingIndex++)
                     {
-                        postings.Add(reader.ReadString());
+                        string docId = reader.ReadString();
+                        Int32 frequencyInDocument = reader.ReadInt32();
+                        postings.Add(new Posting(docId, frequencyInDocument));
                     }
+
                     return new PostingList(term, postings);
                 }
                 else if (comparison > 0)
@@ -73,7 +76,8 @@ namespace Concordia.Spimi
                 }
             }
 
-            return new PostingList(term, new List<string>());
+            // The term never appears
+            return new PostingList(term, new List<Posting>());
         }
 
         void initialize()

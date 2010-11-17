@@ -9,9 +9,9 @@ namespace Concordia.Spimi
     {
         public string Term { get; private set; }
 
-        public List<string> Postings { get; private set; }
+        public IList<Posting> Postings { get; private set; }
 
-        public PostingList(string term, List<string> postings)
+        public PostingList(string term, IList<Posting> postings)
         {
             this.Term = term;
             this.Postings = postings;

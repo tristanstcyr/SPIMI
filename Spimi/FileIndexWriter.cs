@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Concordia.Spimi
 {
@@ -18,11 +19,11 @@ namespace Concordia.Spimi
         /// <param name="postingLists"></param>
         public void Write(Stream termEntriesStream, IEnumerable<PostingList> postingLists)
         {
-            // +-----------------------------------------------------------------------------------------+
-            // | 1. (8) Term count | 2. (8) Term ptr, (4) Frequency | .... | 3. Term, Posting list | ... |
-            // +-----------------------------------------------------------------------------------------+
-            //                                                      ^                              ^   
-            //                                             termEntryPtr                  postingListPtr
+            // +------------------------------------------------------------------------------------------------------------+
+            // | 1. (8) Term count | 2. (8) Term ptr, (4) Doc Frequency | .... | 3. Term, Posting | ... |
+            // +------------------------------------------------------------------------------------------------------------+
+            //                                                      ^                                        ^   
+            //                                             termEntryPtr                               postingListPtr
 
             BinaryWriter termEntriesWriter = new BinaryWriter(termEntriesStream);
             using (FileStream postingListsStream = File.Open(Path.GetTempFileName(), FileMode.Open))
@@ -44,8 +45,11 @@ namespace Concordia.Spimi
                     // Term
                     postingListsWriter.Write((string)postingList.Term);
                     // Posting list
-                    foreach (string docId in postingList.Postings)
-                        postingListsWriter.Write((string)docId);
+                    foreach (Posting posting in postingList.Postings)
+                    {
+                        postingListsWriter.Write((string)posting.DocumentId);
+                        postingListsWriter.Write((Int32)posting.Frequency);
+                    }
 
                     postingListPtr = postingListsStream.Position;
 

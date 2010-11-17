@@ -3,3 +3,8 @@ C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net\bin\R
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net\obj\x86\Release\ResolveAssemblyReference.cache
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net\obj\x86\Release\Spimi.exe
 C:\Users\tristan\Documents\Visual Studio 2010\Projects\Spimi.Net\Spimi.Net\obj\x86\Release\Spimi.pdb
+C:\Users\tristan\Documents\SPIMI2\SPIMI\Spimi\bin\Release\Spimi.exe
+C:\Users\tristan\Documents\SPIMI2\SPIMI\Spimi\bin\Release\Spimi.pdb
+C:\Users\tristan\Documents\SPIMI2\SPIMI\Spimi\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\tristan\Documents\SPIMI2\SPIMI\Spimi\obj\x86\Release\Spimi.exe
+C:\Users\tristan\Documents\SPIMI2\SPIMI\Spimi\obj\x86\Release\Spimi.pdb
