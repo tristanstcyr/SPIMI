@@ -57,7 +57,7 @@ namespace Concordia.Spimi
                 }
 
                 // Extract the terms from the document and add the document to their respective postings lists
-                foreach (string term in lexer.tokenize(document.Body))
+                foreach (string term in lexer.Tokenize(document.Body))
                 {
                     blockWriter.AddPosting(term, document.DocId);
                     if (blockWriter.Postings == maxPostingCountPerBlock)

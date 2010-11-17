@@ -15,7 +15,7 @@ namespace Concordia.Spimi.Net.Tests
         public void BasicLexer_ShouldBeSane()
         {
             BasicLexer tokenizer = new BasicLexer();
-            string[] result = tokenizer.tokenize("hello    \n\tworld").ToArray();
+            string[] result = tokenizer.Tokenize("hello    \n\tworld").ToArray();
             Assert.AreEqual("hello", result[0]);
             Assert.AreEqual("world", result[1]);
         }

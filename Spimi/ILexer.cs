@@ -4,6 +4,6 @@ namespace Concordia.Spimi
 {
     interface ILexer
     {
-        IEnumerable<string> tokenize(string document);
+        IEnumerable<string> Tokenize(string document);
     }
 }

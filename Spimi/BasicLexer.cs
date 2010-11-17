@@ -25,7 +25,7 @@ namespace Concordia.Spimi
         /// </summary>
         /// <param name="document">The document to tokenize</param>
         /// <returns>Returns lowercase tokens, one at a time as soon as they are read</returns>
-        public IEnumerable<string> tokenize(string document)
+        public IEnumerable<string> Tokenize(string document)
         {   
             StringBuilder token = new StringBuilder();
             foreach(char character in document) 
