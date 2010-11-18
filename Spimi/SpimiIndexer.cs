@@ -17,16 +17,19 @@ namespace Concordia.Spimi
 
         IParser parser;
 
-        List<string> blockFilePaths = new List<string>();
-
-        Dictionary<int, string> documentMap = new Dictionary<int, string>();
+        List<string> blockFilePaths = new List<string>();      
 
         SpimiBlockWriter blockWriter;
 
         SpimiBlockReader blockReader;
 
         FileIndexWriter fileIndexWriter;
-        
+
+        Dictionary<string, string> documentMap = new Dictionary<string, string>();
+        Dictionary<string, int> documentLengthMap = new Dictionary<string, int>();
+        long collectionLengthInTokens = 0;
+        long collectionLengthInDocuments = 0;
+               
         public SpimiIndexer(ILexer lexer, IParser parser)
         {
             this.lexer = lexer;
@@ -34,6 +37,7 @@ namespace Concordia.Spimi
             this.blockReader = new SpimiBlockReader();
             this.blockWriter = new SpimiBlockWriter();
             this.fileIndexWriter = new FileIndexWriter();
+
         }
 
         /// <summary>
@@ -45,6 +49,7 @@ namespace Concordia.Spimi
         public void Index(string filePath, Stream file)
         {
             bool gotFirstDocIdInFile = false;
+            
 
             // Each file holds many documents: we need to parse them out first.
             foreach (Document document in parser.ExtractDocuments(file))
@@ -52,11 +57,12 @@ namespace Concordia.Spimi
                 if (!gotFirstDocIdInFile)
                 {
                     // Keep track of (filePath, firstDocIdInThatFile) pairs for easier query result retrieval
-                    documentMap.Add(int.Parse(document.DocId), filePath);
+                    documentMap.Add(document.DocId, filePath);
                     gotFirstDocIdInFile = true;
                 }
 
                 // Extract the terms from the document and add the document to their respective postings lists
+                int termsInDoc = 0;
                 foreach (string term in lexer.Tokenize(document.Body))
                 {
                     blockWriter.AddPosting(term, document.DocId);
@@ -65,8 +71,17 @@ namespace Concordia.Spimi
                         // 
                         this.FlushBlockWriter();
                     }
+                    termsInDoc++;
+                    collectionLengthInTokens++;
                 }
+                documentLengthMap.Add(document.DocId, termsInDoc);
+                collectionLengthInDocuments++;
             }
+        }
+
+        public IndexMetadata GetMetadata()
+        {
+            return new IndexMetadata(documentMap, documentLengthMap, collectionLengthInDocuments, collectionLengthInTokens);
         }
 
         private void FlushBlockWriter()
@@ -87,22 +102,5 @@ namespace Concordia.Spimi
             fileIndexWriter.Write(stream,  blockReader.BeginBlockMerge(openedBlocks));
         }
 
-        /// <summary>
-        /// Helper method that returns the file in which the specified document can be found.
-        /// </summary>
-        public string FilePathForDocId(string docId)
-        {
-            int docIdInt = int.Parse(docId);
-            int lastDocId = 1;
-            foreach(int key in documentMap.Keys.OrderBy(k => k))
-            {
-                if (key > docIdInt)
-                    return documentMap[lastDocId];
-                else if (key == docIdInt)
-                    return documentMap[key];
-                lastDocId = key;
-            }
-            return documentMap[lastDocId];
-        }
     }
 }

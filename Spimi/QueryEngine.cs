@@ -8,12 +8,16 @@ namespace Concordia.Spimi
     /// </summary>
     class QueryEngine
     {
-        IIndex index;
-        List<Posting> queryPostings = new List<Posting>();
+        private IIndex index;
+        private List<Posting> hits = new List<Posting>();
+        private IndexMetadata indexMetadata;
+        private BestMatchRanker bestMatchRanker;
 
-        public QueryEngine(IIndex index)
+        public QueryEngine(IIndex index, IndexMetadata indexMetadata)
         {
             this.index = index;
+            this.indexMetadata = indexMetadata;
+            this.bestMatchRanker = new BestMatchRanker(index, indexMetadata);
         }
 
         /// <summary>
@@ -27,24 +31,32 @@ namespace Concordia.Spimi
             string[] terms = query.Split(' ', '\t');
 
             string term = terms[0];
-            queryPostings.Clear();
-            queryPostings.AddRange(index.GetPostingList(term).Postings);
+            hits.Clear();
+            hits.AddRange(index.GetPostingList(term).Postings.ToList());
+
             
             if (terms.Length > 1)
             {
+                // 1) Intersect the posting lists of the different terms
                 int i = 0;
                 foreach (string andTerm in terms)
                 {
                     if (i != 0)
                     {
-                        IList<Posting> andTermPostings = index.GetPostingList(andTerm).Postings;
-                        queryPostings = queryPostings.Intersect(andTermPostings).ToList();
+                        IList<Posting> andTermPostings = index.GetPostingList(andTerm).Postings.ToList();
+                        hits = hits.Intersect(andTermPostings).ToList();  // relies on the fact that GetHashCode is overriden on Posting and returns the docId
                     }
                     i++;
                 }
             }
-            
-            return queryPostings;            
+
+            // 2) Rank the postings 
+            return bestMatchRanker.Rank(terms, hits);
+        }
+
+        public Dictionary<string, double> Scores
+        {
+            get { return bestMatchRanker.Scores; }
         }
     }
 }

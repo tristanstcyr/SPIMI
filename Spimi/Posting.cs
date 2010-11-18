@@ -21,8 +21,13 @@ namespace Concordia.Spimi
         {
             Posting other = obj as Posting;
             return other != null
-                && other.DocumentId.Equals(this.DocumentId)
-                && other.Frequency.Equals(this.Frequency);
+                && other.DocumentId.Equals(this.DocumentId);
+                //&& other.Frequency.Equals(this.Frequency);
+        }
+
+        public override int GetHashCode()
+        {
+            return int.Parse(DocumentId);
         }
 
         public override string ToString()

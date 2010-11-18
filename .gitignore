@@ -3,3 +3,6 @@
 *.pdb
 *.trx
 *.user
+*.suo
+*/bin/*
+*/obj/*

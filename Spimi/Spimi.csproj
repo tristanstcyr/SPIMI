@@ -64,6 +64,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BestMatchRanker.cs" />
+    <Compile Include="IndexMetadata.cs" />
     <Compile Include="Posting.cs" />
     <Compile Include="ReutersParser.cs" />
     <Compile Include="Document.cs" />
@@ -74,6 +76,7 @@
     <Compile Include="IParser.cs" />
     <Compile Include="MemoryIndex.cs" />
     <Compile Include="PostingList.cs" />
+    <Compile Include="Scorer.cs" />
     <Compile Include="SpimiCli.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryEngine.cs" />
