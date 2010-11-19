@@ -12,8 +12,8 @@ namespace Concordia.Spimi
     /// </summary>
     class ReutersParser : IParser
     {
-        private Regex skipRegex = new Regex("<!DOCTYPE|</TOPICS>|<TOPICS>|<PLACES>|<PLACES>|<PEOPLE>|</PEOPLE>|<ORGS>|</ORGS>|<EXCHANGES>|</EXCHANGES>|<COMPANIES>|</COMPANIES>|<UNKNOWN>|</UNKNOWN>|<TEXT>|</TEXT>|</BODY>");
-        private Regex markupRegex = new Regex("&#\\d*\\;|<DATE>|</DATE>|<D>|</D>|<TITLE>|</TITLE>|<DATELINE>|</DATELINE><BODY>");
+        private Regex skipRegex = new Regex("<!DOCTYPE|</TOPICS>|<TOPICS>|<PLACES>|<PLACES>|<PEOPLE>|</PEOPLE>|<ORGS>|</ORGS>|<EXCHANGES>|</EXCHANGES>|<COMPANIES>|</COMPANIES>|<UNKNOWN>|</UNKNOWN>|<TEXT>|</TEXT>|</BODY>|reute$");
+        private Regex markupRegex = new Regex("&#\\d*\\;|<DATE>|</DATE>|<D>|</D>|<TITLE>|</TITLE>|<DATELINE>|</DATELINE><BODY>|<TEXT TYPE=\"UNPROC\">");
 
         /// <summary>
         /// An iterator that extracts and cleans up one Reuters document at a time from the inputted file
@@ -38,7 +38,7 @@ namespace Concordia.Spimi
                     else if (line.Contains("</REUTERS>"))    // end of a document
                     {
                         inADoc = false;
-                        string body = bodyBuilder.ToString().ToLower();
+                        string body = bodyBuilder.ToString();
                         bodyBuilder.Clear();
                         yield return new Document(docId, body);     // return the document to the calling iterating code
                     }
@@ -49,7 +49,7 @@ namespace Concordia.Spimi
                     else if (inADoc)   // regular line to include in the document
                     {
                         string cleanLine = ScrubOutMarkup(line);
-                        bodyBuilder.Append(cleanLine);
+                        bodyBuilder.Append(cleanLine + " ");
                     }
                 }
             }

@@ -76,6 +76,7 @@
     <Compile Include="IParser.cs" />
     <Compile Include="MemoryIndex.cs" />
     <Compile Include="PostingList.cs" />
+    <Compile Include="ReutersReader.cs" />
     <Compile Include="Scorer.cs" />
     <Compile Include="SpimiCli.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
