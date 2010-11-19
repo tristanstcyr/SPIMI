@@ -45,15 +45,18 @@ namespace Concordia.Spimi
                 ReutersReader reader = new ReutersReader(directory, parser, indexMetadata);
                 Console.WriteLine("Done! Please query the corpus:");
                 IList<Posting> results = null;
+                string query = null;
+
                 while (true)
                 {
                     Console.Write("> ");
-                    string query = Console.ReadLine();
+                    string input = Console.ReadLine();
+                    
                     int selectedRank = 0;
-                    if (!int.TryParse(query, out selectedRank))
+                    if (!int.TryParse(input, out selectedRank))
                     {
-                        results = queryEngine.Query(query.ToLower());
-
+                        query = input.ToLower();
+                        results = queryEngine.Query(input.ToLower());
                         // Print the ranked results
                         int i = 1;
                         Console.WriteLine("rank\tdoc id\tfile location\trsv score");
@@ -67,10 +70,31 @@ namespace Concordia.Spimi
                     else if (selectedRank > 0 && results != null && results.Count >= selectedRank)
                     {
                         // Fetch the document from the collection and display it
+                        ConsoleColor originalColor = Console.ForegroundColor;
+                        char[] delimiters = { ' ', '.', '\t', '\n', ',', ';', ':'};
+                        string[] queryTokens = query.Split(delimiters);
                         string viewDocID = results[selectedRank-1].DocumentId;
+                        string[] tokens = reader.GetDocument(viewDocID).Split(delimiters);
                         Console.WriteLine("Fetching document " + viewDocID + "...");
-                        Console.WriteLine(reader.GetDocument(viewDocID));
-                        Console.WriteLine();                                                                         
+                        bool isFirst = true;
+                        foreach (string token in tokens)
+                        {
+                            if (queryTokens.Contains(token.ToLower()))
+                            {
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = originalColor;
+                            }
+
+                            if (isFirst)
+                                isFirst = false;
+                            else
+                                Console.Write(" ");
+                            Console.Write(token);
+                        }
+                        Console.ForegroundColor = originalColor;
                     }
                 }
             }

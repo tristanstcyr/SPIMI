@@ -27,7 +27,7 @@ namespace Concordia.Spimi
 
         public override int GetHashCode()
         {
-            return int.Parse(DocumentId);
+            return DocumentId.GetHashCode();
         }
 
         public override string ToString()
