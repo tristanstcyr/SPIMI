@@ -75,7 +75,11 @@ namespace Concordia.Spimi
                         string[] queryTokens = query.Split(delimiters);
                         string viewDocID = results[selectedRank-1].DocumentId;
                         string[] tokens = reader.GetDocument(viewDocID).Split(delimiters);
+                        Console.WriteLine();
                         Console.WriteLine("Fetching document " + viewDocID + "...");
+                        Console.WriteLine();
+
+
                         bool isFirst = true;
                         foreach (string token in tokens)
                         {
@@ -96,6 +100,9 @@ namespace Concordia.Spimi
                         }
                         Console.ForegroundColor = originalColor;
                     }
+
+                    Console.WriteLine();
+                    Console.WriteLine();
                 }
             }
         }
