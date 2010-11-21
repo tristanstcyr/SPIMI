@@ -65,7 +65,7 @@ namespace Concordia.Spimi
                             Console.WriteLine(i + ".\t" + posting.DocumentId + "\t" + indexMetadata.FilePathForDocId(posting.DocumentId) + "\t" + queryEngine.Scores[posting.DocumentId].ToString().Substring(0, 4));
                             i++;
                         }
-                        Console.WriteLine(results.Count + " hit(s). (enter hit rank number to read entry, or query again)\n");
+                        Console.WriteLine(results.Count + " hit(s). (enter hit rank number to read entry, or query again)");
                     }
                     else if (selectedRank > 0 && results != null && results.Count >= selectedRank)
                     {
@@ -99,7 +99,6 @@ namespace Concordia.Spimi
                             Console.Write(token);
                         }
                         Console.ForegroundColor = originalColor;
-                        Console.WriteLine("\n");
                     }
 
                     Console.WriteLine();
