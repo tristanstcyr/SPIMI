@@ -95,6 +95,7 @@ namespace Concordia.Spimi
                             Console.Write(token);
                         }
                         Console.ForegroundColor = originalColor;
+                        Console.WriteLine("\n");
                     }
                 }
             }
