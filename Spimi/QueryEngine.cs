@@ -37,14 +37,14 @@ namespace Concordia.Spimi
             
             if (terms.Length > 1)
             {
-                // 1) Intersect the posting lists of the different terms
+                // 1) Union the posting lists of the different terms (not AND queries anymore because we rank)
                 int i = 0;
                 foreach (string andTerm in terms)
                 {
                     if (i != 0)
                     {
                         IList<Posting> andTermPostings = index.GetPostingList(andTerm).Postings.ToList();
-                        hits = hits.Intersect(andTermPostings).ToList();  // relies on the fact that GetHashCode is overriden on Posting and returns the docId
+                        hits = hits.Union(andTermPostings).ToList();  // relies on the fact that GetHashCode is overriden on Posting and returns the docId
                     }
                     i++;
                 }

@@ -30,6 +30,11 @@ namespace Concordia.Spimi
             int df = postingList.Postings.Count;
             double idf = Math.Log10(N / df);
 
+            if (postingList.Postings.Where(p => p.DocumentId == docId).Count() == 0)
+            {
+                return 0;
+            }
+
             int tf = postingList.Postings.Where(p => p.DocumentId == docId).Single().Frequency;
             int Ld = indexMetadata.DocumentLengthMap[docId];
             return idf * (k + 1) * tf / (tf + k * (1 - b + b * Ld / Lavg));
