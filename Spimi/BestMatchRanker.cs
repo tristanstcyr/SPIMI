@@ -7,30 +7,30 @@ namespace Concordia.Spimi
 {
     class BestMatchRanker
     {
-        private IIndex index;
+        private TermIndex index;
         private IndexMetadata indexMetadata;
         private Scorer scorer;
 
-        public BestMatchRanker(IIndex index, IndexMetadata indexMetadata)
+        public BestMatchRanker(TermIndex index, IndexMetadata indexMetadata)
         {
             this.index = index;
             this.indexMetadata = indexMetadata;
             this.scorer = new Scorer(index, indexMetadata);
         }
 
-        public IList<Posting> Rank(string[] terms, IList<Posting> hits)
+        public IList<long> Rank(string[] terms, IEnumerable<long> hits)
         {
             scores.Clear();
-            return hits.OrderByDescending(posting => GetDocScoreForQuery(posting.DocumentId, terms)).ToList();
+            return hits.OrderByDescending(hit => GetDocScoreForQuery(hit, terms)).ToList();
         }
 
-        private Dictionary<string, double> scores = new Dictionary<string, double>();
+        private Dictionary<long, double> scores = new Dictionary<long, double>();
 
-        public Dictionary<string, double> Scores {
+        public Dictionary<long, double> Scores {
             get { return scores; }
         }
 
-        private double GetDocScoreForQuery(string docId, string[] terms)
+        private double GetDocScoreForQuery(long docId, string[] terms)
         {
             double score = 0.0;
             foreach (string term in terms)

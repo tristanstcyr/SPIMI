@@ -8,12 +8,11 @@ namespace Concordia.Spimi
     /// </summary>
     class QueryEngine
     {
-        private IIndex index;
-        private List<Posting> hits = new List<Posting>();
+        private TermIndex index;
         private IndexMetadata indexMetadata;
         private BestMatchRanker bestMatchRanker;
 
-        public QueryEngine(IIndex index, IndexMetadata indexMetadata)
+        public QueryEngine(TermIndex index, IndexMetadata indexMetadata)
         {
             this.index = index;
             this.indexMetadata = indexMetadata;
@@ -26,35 +25,56 @@ namespace Concordia.Spimi
         /// of those terms' postings lists are returned (i.e. the query string
         /// is interpreted as and "AND"-query)
         /// </summary>
-        public IList<Posting> Query(string query)
+        public IList<long> Query(string query)
         {
+            
+            PostingsDocumentIdComparer postingDocIdComparer = new PostingsDocumentIdComparer();
+
             string[] terms = query.Split(' ', '\t');
 
-            string term = terms[0];
-            hits.Clear();
-            hits.AddRange(index.GetPostingList(term).Postings.ToList());
+            HashSet<long> allHits = new HashSet<long>();
 
-            
-            if (terms.Length > 1)
+            // 1) Union the posting lists of the different terms (not AND queries anymore because we rank)
+            foreach(string term in terms)
             {
-                // 1) Union the posting lists of the different terms (not AND queries anymore because we rank)
-                int i = 0;
-                foreach (string andTerm in terms)
-                {
-                    if (i != 0)
-                    {
-                        IList<Posting> andTermPostings = index.GetPostingList(andTerm).Postings.ToList();
-                        hits = hits.Union(andTermPostings).ToList();  // relies on the fact that GetHashCode is overriden on Posting and returns the docId
-                    }
-                    i++;
-                }
+                foreach (long hit in getHits(term))
+                    allHits.Add(hit);
             }
 
             // 2) Rank the postings 
-            return bestMatchRanker.Rank(terms, hits);
+            return bestMatchRanker.Rank(terms, allHits);
         }
 
-        public Dictionary<string, double> Scores
+        private HashSet<long> getHits(string term)
+        {
+            HashSet<long> hits = new HashSet<long>();
+            IList<Posting> foundPostings;
+
+            if (index.TryGet(term, out foundPostings))
+            {
+                foreach (Posting p in foundPostings)
+                {
+                    hits.Add(p.DocumentId);
+                }
+            }
+
+            return hits;
+        }
+
+        class PostingsDocumentIdComparer : IEqualityComparer<Posting>
+        {
+            public bool Equals(Posting posting1, Posting posting2)
+            {
+                return posting1.DocumentId.Equals(posting2.DocumentId);
+            }
+
+            public int GetHashCode(Posting posting)
+            {
+                return posting.DocumentId.GetHashCode();
+            }
+        }
+
+        public Dictionary<long, double> Scores
         {
             get { return bestMatchRanker.Scores; }
         }

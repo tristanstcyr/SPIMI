@@ -12,26 +12,36 @@ namespace Concordia.SpimiTests
     [TestClass]
     public class SpimiBlockWriterTest
     {
+
+        private const long
+            DocA = 0,
+            DocB = 1;
+
         [TestMethod]
         public void TestWrite()
         {
-            BinaryFormatter formatter = new BinaryFormatter();
+            PostingListEncoder decoder = new PostingListEncoder();
             SpimiBlockWriter writer = new SpimiBlockWriter();
-            writer.AddPosting("bTerm", "aDoc");
-            writer.AddPosting("aTerm", "aDoc");
-            writer.AddPosting("aTerm", "bDoc");
+            writer.AddPosting("bTerm", DocA);
+            writer.AddPosting("aTerm", DocA);
+            writer.AddPosting("aTerm", DocB);
             string filePath = writer.FlushToFile();
             using (FileStream file = File.Open(filePath, FileMode.Open))
             {
                 BinaryReader reader = new BinaryReader(file);
                 Assert.AreEqual(2, reader.ReadInt32());
                 Assert.AreEqual("aTerm", reader.ReadString());
-                Assert.AreEqual(2, reader.ReadInt32());
-                Assert.AreEqual(new Posting("aDoc", 1), (Posting)formatter.Deserialize(file));
-                Assert.AreEqual(new Posting("bDoc", 1), (Posting)formatter.Deserialize(file));
+                IList<Posting> postings = new List<Posting>();
+                postings.Add(new Posting(DocA, 1));
+                postings.Add(new Posting(DocB, 1));
+                IList<Posting> readPostings = decoder.read(reader);
+                for (int i = 0; i < postings.Count; i++ )
+                {
+                    readPostings[i].Equals(postings[i]);
+                }
                 Assert.AreEqual("bTerm", reader.ReadString());
-                Assert.AreEqual(1, reader.ReadInt32());
-                Assert.AreEqual(new Posting("aDoc", 1), (Posting)formatter.Deserialize(file));
+                readPostings = decoder.read(reader);
+                Assert.AreEqual(new Posting(DocA, 1), readPostings[0]);
             }
         }
     }

@@ -19,14 +19,17 @@ namespace Concordia.Spimi
             this.metadata = metadata;
         }
 
-        public string GetDocument(string docID)
+        public string GetDocument(long docID)
         {
-            string filepath = metadata.FilePathForDocId(docID);
-            FileInfo file = new FileInfo(directory + "\\" + filepath);
+            DocumentInfo docInfo;
+            if (!metadata.TryGetDocumentInfo(docID, out docInfo))
+                throw new InvalidOperationException("docId "+docID+" was not found in the metadata");
+
+            FileInfo file = new FileInfo(docInfo.Url);
             FileStream stream = file.Open(FileMode.Open);
             foreach (Document document in parser.ExtractDocuments(stream))
             {
-                if (document.DocId == docID)
+                if (document.DocId.Equals(docInfo.Identifier))
                 {
                     return document.Body.Replace("     ", "\n");
                 }

@@ -3,95 +3,109 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics.Contracts;
 
 namespace Concordia.Spimi
 {
     /// <summary>
     /// The final merged index can be used through this class.
     /// </summary>
-    class FileIndex : IIndex
+    class FileIndex<K, V> : IIndex<K, V> where K : IComparable<K>
     {
-        public const int PointerByteSize = sizeof(Int64);
-        public const int TermSizeByteSize = sizeof(Int32);
-        public const int TermEntryByteSize = PointerByteSize + TermSizeByteSize;
+        private const int PointerByteSize = sizeof(Int64);
 
-        long postingListStartPtr;
+        private const int HeaderByteSize = sizeof(Int64);
+
         Stream stream;
         BinaryReader reader;
+        IBinaryObjectEncoder<K> keyDecoder;
+        IBinaryObjectEncoder<V> valueDecoder;
 
-        public long TermCount { get; private set; }
+        public long EntryCount { get; private set; }
 
-        FileIndex(Stream stream)
+        BinarySearch<K> binarySearch;
+
+        // Where the data starts
+        long dataStartPtr;
+        // Where the index starts
+        long indexStartPtr;
+
+        public FileIndex(
+            IBinaryObjectEncoder<K> keyDecoder,
+            IBinaryObjectEncoder<V> valueDecoder,
+            Stream stream)
         {
+            Contract.Requires(stream != null);
+            Contract.Requires(keyDecoder != null);
+            Contract.Requires(valueDecoder != null);
+            Contract.Ensures(Contract.OldValue(stream.Position) == stream.Position);
+
             this.stream = stream;
             this.reader = new BinaryReader(stream);
+            this.keyDecoder = keyDecoder;
+            this.valueDecoder = valueDecoder;
+
+            this.indexStartPtr = stream.Position + HeaderByteSize;
+            this.dataStartPtr = this.indexStartPtr + PointerByteSize * this.EntryCount;
+
+            this.EntryCount = this.reader.ReadInt64();
+
+            this.binarySearch = new BinarySearch<K>(this.GetKey, this.EntryCount - 1);
+
+            this.restoreStreamPosition();
         }
 
-        /// <summary>
-        /// Searches for the term using binary search
-        /// </summary>
-        /// <param name="term"></param>
-        /// <returns></returns>
-        public PostingList GetPostingList(string term)
+        private void restoreStreamPosition()
         {
-            long minEntryIndex = 0;
-            long maxEntryIndex = this.TermCount - 1;
-
-            while (minEntryIndex <= maxEntryIndex)
-            {
-                long midEntryIndex = minEntryIndex + ((maxEntryIndex - minEntryIndex) / 2);
-
-                // Read the entry
-                Int64 termEntryPtr = sizeof(long) + midEntryIndex * TermEntryByteSize;
-                stream.Seek(termEntryPtr, SeekOrigin.Begin);
-                Int64 termPtr = reader.ReadInt64() + sizeof(Int64) + this.TermCount * TermEntryByteSize;
-                Int32 frequency = reader.ReadInt32();
-
-                // Read the term
-                stream.Seek(termPtr, SeekOrigin.Begin);
-                string foundTerm = reader.ReadString();
-
-                int comparison = term.CompareTo(foundTerm);
-
-                if (comparison == 0)
-                {
-                    // Read the postings
-                    List<Posting> postings = new List<Posting>();
-                    for (int postingIndex = 0; postingIndex < frequency; postingIndex++)
-                    {
-                        string docId = reader.ReadString();
-                        Int32 frequencyInDocument = reader.ReadInt32();
-                        postings.Add(new Posting(docId, frequencyInDocument));
-                    }
-
-                    return new PostingList(term, postings);
-                }
-                else if (comparison > 0)
-                {
-                    minEntryIndex = midEntryIndex + 1;
-                }
-                else // if (comparison < 0)
-                {
-                    maxEntryIndex = midEntryIndex - 1;
-                }
-            }
-
-            // The term never appears
-            return new PostingList(term, new List<Posting>());
+            this.stream.Seek(indexStartPtr - HeaderByteSize, SeekOrigin.Begin);
         }
 
-        void initialize()
+        public K GetKey(long index)
         {
-            this.stream.Seek(0, SeekOrigin.Begin);
-            this.TermCount = this.reader.ReadInt64();
-            this.postingListStartPtr = TermEntryByteSize * this.TermCount + PointerByteSize;
+            Contract.Requires(index < this.EntryCount);
+            Contract.Ensures(Contract.Result<K>() != null);
+            Contract.Ensures(Contract.OldValue(this.stream.Position) == this.stream.Position);
+
+            MoveStreamToEntryStart(index);
+            K key = keyDecoder.read(this.reader);
+            this.restoreStreamPosition();
+
+            return key;
         }
 
-        public static FileIndex Open(Stream stream)
+        // Searches for the term using binary search
+        public bool TryGet(K key, out V value)
         {
-            FileIndex index = new FileIndex(stream);
-            index.initialize();
-            return index;
+            Contract.Ensures(Contract.OldValue(this.stream.Position) == this.stream.Position);
+
+            value = default(V);
+            long index = 0;
+            if (!binarySearch.TryFind(key, ref index))
+                return false;
+           
+            MoveStreamToEntryStart(index);
+           
+            // Go past the key
+            keyDecoder.read(this.reader);
+            // Read the value
+            value = valueDecoder.read(reader);
+
+            this.restoreStreamPosition();
+
+            return true;
+        }
+
+        private void MoveStreamToEntryStart(long index)
+        {
+            Contract.Requires(index < this.EntryCount);
+
+            // Read the pointer
+            Int64 ptrLocation = this.indexStartPtr + index * PointerByteSize;
+            stream.Seek(ptrLocation, SeekOrigin.Begin);
+            Int64 ptr = reader.ReadInt64();
+
+            // Move to pointed location
+            stream.Seek(ptr, SeekOrigin.Begin);
         }
     }
 }

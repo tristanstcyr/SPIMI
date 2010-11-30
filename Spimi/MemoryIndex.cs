@@ -1,20 +1,20 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
+//using System.Linq;
 
 namespace Concordia.Spimi
 {
-    class MemoryIndex : IIndex
+    class MemoryIndex : IIndex<string, IList<Posting>>
     {
         // Term -> <DocId ->  (DocId, count)>
-        Dictionary<string, Dictionary<string, Posting>> index = new Dictionary<string, Dictionary<string, Posting>>();
+        SortedList<string, SortedList<long, Posting>> index = new SortedList<string, SortedList<long, Posting>>();
 
         public int Postings { get; private set; }
 
-        public IList<string> Vocabulary
+        public SortedList<string, SortedList<long, Posting>> Entries
         {
             get
             {
-                return index.Keys.ToList();
+                return index;
             }
         }
 
@@ -23,14 +23,14 @@ namespace Concordia.Spimi
             this.Postings = 0;
         }
 
-        public void AddTerm(string term, string docId)
+        public void AddTerm(string term, long docId)
         {
             // Get the posting list
-            Dictionary<string, Posting> postingList;
+            SortedList<long, Posting> postingList;
             // If we encounter a term for the first time
             if (!index.TryGetValue(term, out postingList))
             {
-                postingList = new Dictionary<string, Posting>();
+                postingList = new SortedList<long, Posting>();
                 index.Add(term, postingList);
             }
 
@@ -48,18 +48,15 @@ namespace Concordia.Spimi
             this.Postings++;
         }
 
-        public PostingList GetPostingList(string term)
+        public bool TryGet(string key, out IList<Posting> value)
         {
-            Dictionary<string, Posting> postingList;
-            if (index.TryGetValue(term, out postingList))
+            value = null;
+            SortedList<long, Posting> postings = null;
+            if (!index.TryGetValue(key, out postings))
             {
-                return new PostingList(term, postingList.Values.ToList());
+                return false;
             }
-            else
-            {
-                // Term was not found
-                return new PostingList(term, new List<Posting>());
-            }
+            return true;
         }
     }
 }

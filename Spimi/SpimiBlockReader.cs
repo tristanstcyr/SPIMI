@@ -17,21 +17,13 @@ namespace Concordia.Spimi
         {
             using (FileStream stream = File.Open(filepath, FileMode.Open))
             {
+                PostingListEncoder decoder = new PostingListEncoder();
                 BinaryReader reader = new BinaryReader(stream);
                 int termCount = reader.ReadInt32();
                 for (int termIndex = 0; termIndex < termCount; termIndex++)
                 {
                     string term = reader.ReadString();
-                    int postingCount = reader.ReadInt32();
-                    List<Posting> postings = new List<Posting>(postingCount);
-                    for (int postingIndex = 0; postingIndex < postingCount; postingIndex++)
-                    {
-                        string documentId = reader.ReadString();
-                        Int32 frequency = reader.ReadInt32();
-                        postings.Add(new Posting(documentId, frequency));
-                    }
-
-                    yield return new PostingList(term, postings);
+                    yield return new PostingList(term, decoder.read(reader));
                 }
             }
         }
@@ -78,7 +70,7 @@ namespace Concordia.Spimi
                     string term = minimums[0].Current.Term;
                     
                     // DocumentId -> Posting
-                    Dictionary<string, Posting> mergedPostingList = new Dictionary<string, Posting>();
+                    Dictionary<long, Posting> mergedPostingList = new Dictionary<long, Posting>();
 
                     foreach (IEnumerator<PostingList> postingListEnum in minimums)
                     {

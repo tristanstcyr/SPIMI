@@ -8,10 +8,10 @@ namespace Concordia.Spimi
     [Serializable]
     class Posting
     {
-        public string DocumentId { get; set; }
+        public long DocumentId { get; set; }
         public int Frequency { get; set; }
 
-        public Posting(string documentId, int frequency)
+        public Posting(long documentId, int frequency)
         {
             this.DocumentId = documentId;
             this.Frequency = frequency;
@@ -21,18 +21,13 @@ namespace Concordia.Spimi
         {
             Posting other = obj as Posting;
             return other != null
-                && other.DocumentId.Equals(this.DocumentId);
-                //&& other.Frequency.Equals(this.Frequency);
-        }
-
-        public override int GetHashCode()
-        {
-            return DocumentId.GetHashCode();
+                && other.DocumentId.Equals(this.DocumentId)
+                && other.Frequency.Equals(this.Frequency);
         }
 
         public override string ToString()
         {
-            return "<"+this.DocumentId+", "+this.Frequency+">";
+            return "Posting{DocumentId="+this.DocumentId+", Frequency="+this.Frequency+">";
         }
     }
 }

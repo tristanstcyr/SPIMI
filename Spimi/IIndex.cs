@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 namespace Concordia.Spimi
 {
-    interface IIndex
+    interface IIndex<K, V> where K : IComparable<K>
     {
-        PostingList GetPostingList(string term);
+        bool TryGet(K key, out V value);
     }
 }

@@ -12,75 +12,99 @@ namespace Concordia.SpimiTests
     [TestClass]
     public class FileIndexTests
     {
+
+        private const long
+            DocA = 0,
+            DocB = 1,
+            DocZ = 2,
+            DocT = 3;
+
         [TestMethod]
         public void TestWrite()
         {
-            Stream stream = new MemoryStream();
+            MemoryStream stream = new MemoryStream();
+            
+            // FileIndex should support a stream starting at any point
+            stream.Seek(10, SeekOrigin.Begin);
+
+            PostingListEncoder decoder = new PostingListEncoder();
             PerformWrite(stream);
 
             BinaryReader reader = new BinaryReader(stream);
-            
+
             // Term count
-            stream.Seek(0, SeekOrigin.Begin);
             Assert.AreEqual(2, reader.ReadInt64());
 
-            // (8) Term ptr, (4) Doc Frequency
-            reader.ReadInt64();
-            Assert.AreEqual(2, reader.ReadInt32());
+            long ptr1 = reader.ReadInt64();
+            long ptr2 = reader.ReadInt64();
 
-            // (8) Term ptr, (4) Doc Frequency
-            reader.ReadInt64();
-            Assert.AreEqual(3, reader.ReadInt32());
-
-            BinaryFormatter formatter = new BinaryFormatter();
+            Assert.AreEqual(stream.Position, ptr1);
             Assert.AreEqual("aTerm", reader.ReadString());
-            Assert.AreEqual(new Posting("aDoc", 1), BinaryReaderTestHelper.readPosting(reader));
-            Assert.AreEqual(new Posting("bDoc", 1), BinaryReaderTestHelper.readPosting(reader));
+            IList<Posting> postings = decoder.read(reader);
+            Assert.AreEqual(2, postings.Count);
+            Assert.AreEqual(new Posting(DocA, 1), postings[0]);
+            Assert.AreEqual(new Posting(DocB, 1), postings[1]);
+            
+            Assert.AreEqual(stream.Position, ptr2);
             Assert.AreEqual("bTerm", reader.ReadString());
-            Assert.AreEqual(new Posting("aDoc", 1), BinaryReaderTestHelper.readPosting(reader));
-            Assert.AreEqual(new Posting("zDoc", 1), BinaryReaderTestHelper.readPosting(reader));
-            Assert.AreEqual(new Posting("tDoc", 1), BinaryReaderTestHelper.readPosting(reader));
+            postings = decoder.read(reader);
+            Assert.AreEqual(3, postings.Count);
+            Assert.AreEqual(new Posting(DocA, 1), postings[0]);
+            Assert.AreEqual(new Posting(DocZ, 1), postings[1]);
+            Assert.AreEqual(new Posting(DocT, 1), postings[2]);
         }
 
         [TestMethod]
         public void TestRead()
         {
             Stream stream = new MemoryStream();
-            PerformWrite(stream);
-            FileIndex index = FileIndex.Open(stream);
-            
-            Assert.AreEqual(2, index.TermCount);
-            PostingList list = index.GetPostingList("aTerm");
-            Assert.AreEqual("aTerm", list.Term);
-            Assert.AreEqual(2, list.Postings.Count);
-            Assert.AreEqual(new Posting("aDoc", 1), list.Postings[0]);
-            Assert.AreEqual(new Posting("bDoc", 1), list.Postings[1]);
+            // FileIndex should support a stream starting at any point
+            stream.Seek(100, SeekOrigin.Begin);
 
-            list = index.GetPostingList("bTerm");
-            Assert.AreEqual("bTerm", list.Term);
-            Assert.AreEqual(3, list.Postings.Count);
-            Assert.AreEqual(new Posting("aDoc", 1), list.Postings[0]);
-            Assert.AreEqual(new Posting("zDoc", 1), list.Postings[1]);
-            Assert.AreEqual(new Posting("tDoc", 1), list.Postings[2]);
+            PerformWrite(stream);
+            TermIndex index =
+                new TermIndex(stream);
+
+            Assert.AreEqual(100, stream.Position);
+
+            Assert.AreEqual(2, index.EntryCount);
+            IList<Posting> postings;
+            index.TryGet("aTerm", out postings);
+            Assert.IsNotNull(postings);
+            Assert.AreEqual(2, postings.Count);
+            Assert.AreEqual(new Posting(DocA, 1), postings[0]);
+            Assert.AreEqual(new Posting(DocB, 1), postings[1]);
+
+            index.TryGet("bTerm", out postings);
+            Assert.IsNotNull(postings);
+            Assert.AreEqual(3, postings.Count);
+            Assert.AreEqual(new Posting(DocA, 1), postings[0]);
+            Assert.AreEqual(new Posting(DocZ, 1), postings[1]);
+            Assert.AreEqual(new Posting(DocT, 1), postings[2]);
         }
 
         void PerformWrite(Stream stream)
         {
-            FileIndexWriter writer = new FileIndexWriter();
-            List<PostingList> postingLists = new List<PostingList>();
+            long previousPosition = stream.Position;
+            FileIndexWriter<string, IList<Posting>> writer = new FileIndexWriter<string, IList<Posting>>(
+                new StringEncoder(),
+                new PostingListEncoder(),
+                stream);
 
             List<Posting> postings = new List<Posting>();
-            postings.Add(new Posting("aDoc", 1));
-            postings.Add(new Posting("bDoc", 1));
-            postingLists.Add(new PostingList("aTerm", postings));
+            postings.Add(new Posting(DocA, 1));
+            postings.Add(new Posting(DocB, 1));
+            writer.Add("aTerm", postings);
 
             postings = new List<Posting>();
-            postings.Add(new Posting("aDoc", 1));
-            postings.Add(new Posting("zDoc", 1));
-            postings.Add(new Posting("tDoc", 1));
-            postingLists.Add(new PostingList("bTerm", postings));
+            postings.Add(new Posting(DocA, 1));
+            postings.Add(new Posting(DocZ, 1));
+            postings.Add(new Posting(DocT, 1));
+            writer.Add("bTerm", postings);
 
-            writer.Write(stream, postingLists);
+            string file = Path.GetTempFileName();
+            writer.WriteOut();
+            Assert.AreEqual(previousPosition, stream.Position);
         }
 
     }

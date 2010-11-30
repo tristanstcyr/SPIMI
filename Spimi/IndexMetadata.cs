@@ -2,60 +2,45 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 namespace Concordia.Spimi
 {
     class IndexMetadata
     {
-        private Dictionary<string, string> documentMap = new Dictionary<string, string>();
-        private Dictionary<string, int> documentLengthMap = new Dictionary<string, int>();
-        private long collectionLengthInTokens;
-        private long collectionLengthInDocuments;
+        FileIndex<long, DocumentInfo> documentsInfo;
 
-        public IndexMetadata(Dictionary<string, string> documentMap, Dictionary<string, int> documentLengthMap, long collectionLengthInDocuments, long collectionLengthInTokens)
+        public long TokenCount { get; private set; }
+
+        public IndexMetadata(Stream stream)
         {
-            // TODO: Complete member initialization
-            this.documentMap = documentMap;
-            this.documentLengthMap = documentLengthMap;
-            this.collectionLengthInDocuments = collectionLengthInDocuments;
-            this.collectionLengthInTokens = collectionLengthInTokens;
+            BinaryReader reader = new BinaryReader(stream);
+            this.TokenCount = reader.ReadInt64();
+            this.documentsInfo = new FileIndex<long, DocumentInfo>(
+                new LongEncoder(),
+                new DocumentInfoEncoder(), stream);
         }
 
-        public Dictionary<string, int> DocumentLengthMap
+        public bool TryGetDocumentInfo(long documentId, out DocumentInfo docInf)
         {
-            get { return documentLengthMap; }
-            set { documentLengthMap = value; }
+            return documentsInfo.TryGet(documentId, out docInf);
         }
 
-        public long CollectionLengthInTokens
+        public DocumentInfo this[long documentId]
         {
-            get { return collectionLengthInTokens; }
+            get
+            {
+                DocumentInfo info;
+                if (!this.TryGetDocumentInfo(documentId, out info))
+                    throw new ArgumentOutOfRangeException("documentId "+documentId+" is not in the metadata");
+                return info;
+            }
+
         }
 
         public long CollectionLengthInDocuments
         {
-            get { return collectionLengthInDocuments; }
+            get { return documentsInfo.EntryCount; }
         }
-
-
-        /// <summary>
-        /// Helper method that returns the file in which the specified document can be found.
-        /// </summary>
-        public string FilePathForDocId(string docId)
-        {
-            int docIdInt = int.Parse(docId);
-            int lastDocId = 1;
-            foreach (string key in documentMap.Keys.OrderBy(k => int.Parse(k)))
-            {
-                int intKey = int.Parse(key);
-                if (intKey > docIdInt)
-                    return documentMap[lastDocId.ToString()];
-                else if (intKey == docIdInt)
-                    return documentMap[key];
-                lastDocId = intKey;
-            }
-            return documentMap[lastDocId.ToString()];
-        }
-
     }
 }

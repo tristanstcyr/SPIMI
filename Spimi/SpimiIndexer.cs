@@ -17,27 +17,27 @@ namespace Concordia.Spimi
 
         IParser parser;
 
-        List<string> blockFilePaths = new List<string>();      
+        List<string> termIndexBlockFilePaths = new List<string>();
 
-        SpimiBlockWriter blockWriter;
+        List<string> documentIndexBlockFilePaths = new List<string>();
 
-        SpimiBlockReader blockReader;
+        SpimiBlockWriter termIndexBlockWriter;
 
-        FileIndexWriter fileIndexWriter;
+        CollectionMetadataWriter metadataWriter;
 
-        Dictionary<string, string> documentMap = new Dictionary<string, string>();
-        Dictionary<string, int> documentLengthMap = new Dictionary<string, int>();
         long collectionLengthInTokens = 0;
-        long collectionLengthInDocuments = 0;
-               
-        public SpimiIndexer(ILexer lexer, IParser parser)
+
+        long nextDocumentId = 0;
+
+        Stream indexStream;
+
+        public SpimiIndexer(ILexer lexer, IParser parser, Stream indexStream, Stream metadata)
         {
             this.lexer = lexer;
             this.parser = parser;
-            this.blockReader = new SpimiBlockReader();
-            this.blockWriter = new SpimiBlockWriter();
-            this.fileIndexWriter = new FileIndexWriter();
-
+            this.termIndexBlockWriter = new SpimiBlockWriter();
+            this.indexStream = indexStream;
+            this.metadataWriter = new CollectionMetadataWriter(metadata);
         }
 
         /// <summary>
@@ -48,25 +48,16 @@ namespace Concordia.Spimi
         /// <param name="file">The already opened file stream of the file in question.</param>
         public void Index(string filePath, Stream file)
         {
-            bool gotFirstDocIdInFile = false;
-            
-
             // Each file holds many documents: we need to parse them out first.
             foreach (Document document in parser.ExtractDocuments(file))
             {
-                if (!gotFirstDocIdInFile)
-                {
-                    // Keep track of (filePath, firstDocIdInThatFile) pairs for easier query result retrieval
-                    documentMap.Add(document.DocId, filePath);
-                    gotFirstDocIdInFile = true;
-                }
-
                 // Extract the terms from the document and add the document to their respective postings lists
+                long docId = nextDocumentId++;
                 int termsInDoc = 0;
                 foreach (string term in lexer.Tokenize(document.Body))
                 {
-                    blockWriter.AddPosting(term, document.DocId);
-                    if (blockWriter.Postings == maxPostingCountPerBlock)
+                    termIndexBlockWriter.AddPosting(term, docId);
+                    if (termIndexBlockWriter.Postings == maxPostingCountPerBlock)
                     {
                         // 
                         this.FlushBlockWriter();
@@ -74,32 +65,44 @@ namespace Concordia.Spimi
                     termsInDoc++;
                     collectionLengthInTokens++;
                 }
-                documentLengthMap.Add(document.DocId, termsInDoc);
-                collectionLengthInDocuments++;
-            }
-        }
 
-        public IndexMetadata GetMetadata()
-        {
-            return new IndexMetadata(documentMap, documentLengthMap, collectionLengthInDocuments, collectionLengthInTokens);
+                this.metadataWriter.AddDocumentInfo(docId,
+                    new DocumentInfo(filePath, termsInDoc, document.DocId));
+            }
         }
 
         private void FlushBlockWriter()
         {
-            string blockFilePath = blockWriter.FlushToFile();
-            blockFilePaths.Add(blockFilePath);
+            string blockFilePath = termIndexBlockWriter.FlushToFile();
+            termIndexBlockFilePaths.Add(blockFilePath);
         }
 
         /// <summary>
         /// Once the corpus is fully indexed, call this to merge all the intermediate inverted indexes into a single index.
         /// </summary>
         /// <param name="stream">The opened destination filestream for the full inverted index.</param>
-        public void MergeIndexBlocks(Stream stream)
+        public void WriteOut()
         {
-            if (blockWriter.Postings > 0)
+            MergeBlocks();
+            this.metadataWriter.WriteOut();
+        }
+
+        private void MergeBlocks()
+        {
+            if (termIndexBlockWriter.Postings > 0)
                 FlushBlockWriter();
-            List<IEnumerator<PostingList>> openedBlocks = blockReader.OpenBlocks(this.blockFilePaths);
-            fileIndexWriter.Write(stream,  blockReader.BeginBlockMerge(openedBlocks));
+            using (FileIndexWriter<string, IList<Posting>> writer = new FileIndexWriter<string, IList<Posting>>(
+                new StringEncoder(),
+                new PostingListEncoder(), indexStream))
+            {
+                SpimiBlockReader blockReader = new SpimiBlockReader();
+                List<IEnumerator<PostingList>> openedBlocks = blockReader.OpenBlocks(this.termIndexBlockFilePaths);
+                foreach (PostingList postingList in blockReader.BeginBlockMerge(openedBlocks))
+                {
+                    writer.Add(postingList.Term, postingList.Postings);
+                }
+                writer.WriteOut();
+            }
         }
 
     }

@@ -15,8 +15,6 @@ namespace Concordia.Spimi
     {
         MemoryIndex index = new MemoryIndex();
 
-        public long SerializedTermsSize { get; private set; }
-
         public int Postings 
         {
             get
@@ -25,45 +23,29 @@ namespace Concordia.Spimi
             }
         }
 
-        public SpimiBlockWriter()
-        {
-            SerializedTermsSize = 0;
-        }
-
-        public void AddPosting(string term, string docId)
+        public void AddPosting(string term, long docId)
         {
             index.AddTerm(term, docId);
         }
 
         public string FlushToFile()
         {
+            
             string filename = Path.GetTempFileName();
-            IOrderedEnumerable<string> orderedEntries = index.Vocabulary.OrderBy(term => term);
+            
+            SortedList<string, SortedList<long, Posting>> orderedEntries = index.Entries;
 
             using (FileStream fs = File.Open(filename, FileMode.Append))
             {
+                PostingListEncoder encoder = new PostingListEncoder();
                 BinaryWriter writer = new BinaryWriter(fs);
 
-                writer.Write((Int32)orderedEntries.Count());
+                writer.Write((Int32)orderedEntries.Count);
 
-                foreach (string term in orderedEntries)
+                foreach (KeyValuePair<string, SortedList<long, Posting>> termPostingsPair in orderedEntries)
                 {
-                    IList<Posting> postings = index.GetPostingList(term).Postings;
-
-                    // term
-                    long termLocation = fs.Position;
-                    writer.Write((string)term);
-                    SerializedTermsSize += fs.Position - termLocation;
-                    
-                    // number of postings
-                    writer.Write((Int32)postings.Count);
-                    
-                    // postings
-                    foreach (Posting posting in postings)
-                    {
-                        writer.Write((string)posting.DocumentId);
-                        writer.Write((Int32)posting.Frequency);
-                    }
+                    writer.Write((string)termPostingsPair.Key);
+                    encoder.write(writer, termPostingsPair.Value.Values);
                 }
             }
 
