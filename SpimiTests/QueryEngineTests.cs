@@ -41,8 +41,8 @@ namespace Concordia.SpimiTests
             MemoryStream metadataStream = new MemoryStream();
             using (CollectionMetadataWriter metadataWriter = new CollectionMetadataWriter(metadataStream))
             {
-                metadataWriter.AddDocumentInfo(0, new DocumentInfo("http://www.example.com/index.html", 100, ""));
-                metadataWriter.AddDocumentInfo(1, new DocumentInfo("http://www.example.com/menu.html", 300, ""));
+                metadataWriter.AddDocumentInfo(0, new DocumentInfo("http://www.example.com/index.html", "Example", 100, ""));
+                metadataWriter.AddDocumentInfo(1, new DocumentInfo("http://www.example.com/menu.html", "Example", 300, ""));
                 metadataWriter.WriteOut();
             }
 

@@ -44,9 +44,9 @@ namespace Concordia.Spimi
         /// Parses and tokenizes the inputted file. New terms are added to the 
         /// dictionary, and reccurent terms are added to those terms' postings list.
         /// </summary>
-        /// <param name="filePath">The path of the file to index.</param>
+        /// <param name="uri">The path of the file to index.</param>
         /// <param name="file">The already opened file stream of the file in question.</param>
-        public void Index(string filePath, Stream file)
+        public void Index(string uri, Stream file)
         {
             // Each file holds many documents: we need to parse them out first.
             foreach (Document document in parser.ExtractDocuments(file))
@@ -67,7 +67,7 @@ namespace Concordia.Spimi
                 }
 
                 this.metadataWriter.AddDocumentInfo(docId,
-                    new DocumentInfo(filePath, termsInDoc, document.DocId));
+                    new DocumentInfo(uri, document.Title, termsInDoc, document.SpecialIdentifier));
             }
         }
 

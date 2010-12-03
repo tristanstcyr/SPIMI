@@ -25,11 +25,11 @@ namespace Concordia.Spimi
             if (!metadata.TryGetDocumentInfo(docID, out docInfo))
                 throw new InvalidOperationException("docId "+docID+" was not found in the metadata");
 
-            FileInfo file = new FileInfo(docInfo.Url);
+            FileInfo file = new FileInfo(docInfo.Uri);
             FileStream stream = file.Open(FileMode.Open);
             foreach (Document document in parser.ExtractDocuments(stream))
             {
-                if (document.DocId.Equals(docInfo.Identifier))
+                if (document.SpecialIdentifier.Equals(docInfo.SpecialIdentifier))
                 {
                     return document.Body.Replace("     ", "\n");
                 }

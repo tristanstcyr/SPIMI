@@ -77,6 +77,9 @@
     <AssemblyOriginatorKeyFile>sgKey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\dlls\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -91,6 +94,8 @@
     <Compile Include="CollectionMetadataWriter.cs" />
     <Compile Include="DocumentInfo.cs" />
     <Compile Include="DocumentInfoEncoder.cs" />
+    <Compile Include="WebCrawler.cs" />
+    <Compile Include="HtmlParser.cs" />
     <Compile Include="IndexMetadata.cs" />
     <Compile Include="IBinaryObjectEncoder.cs" />
     <Compile Include="LongEncoder.cs" />
@@ -116,6 +121,7 @@
     <Compile Include="SpimiBlockWriter.cs" />
     <Compile Include="StringEncoder.cs" />
     <Compile Include="TermIndex.cs" />
+    <Compile Include="WebDocument.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0,Profile=Client">
