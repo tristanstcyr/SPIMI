@@ -17,7 +17,7 @@ namespace Concordia.SpimiTests
             MemoryStream stream = new MemoryStream();
             DocumentInfoEncoder encoder = new DocumentInfoEncoder();
 
-            DocumentInfo writtenDoc = new DocumentInfo("http://www.google.com/index.html", "Google", 150, "#Section1");
+            DocumentInfo writtenDoc = new DocumentInfo("http://www.google.com/index.html", "Google", 150, "#Section1", null);
             encoder.write(new BinaryWriter(stream), writtenDoc);
 
             stream.Seek(0, SeekOrigin.Begin);

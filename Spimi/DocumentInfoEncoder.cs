@@ -7,6 +7,7 @@ namespace Concordia.Spimi
 {
     class DocumentInfoEncoder : IBinaryObjectEncoder<DocumentInfo>
     {
+        TermVectorEncoder termVectorEncoder = new TermVectorEncoder();
 
         public void write(System.IO.BinaryWriter stream, DocumentInfo t)
         {
@@ -14,6 +15,7 @@ namespace Concordia.Spimi
             stream.Write((string)t.Uri);
             stream.Write((string)t.Title);
             stream.Write((string)t.SpecialIdentifier);
+            termVectorEncoder.write(stream, t.TermVector);
         }
 
         public DocumentInfo read(System.IO.BinaryReader stream)
@@ -22,7 +24,8 @@ namespace Concordia.Spimi
             string url = stream.ReadString();
             string title = stream.ReadString();
             string id = stream.ReadString();
-            return new DocumentInfo(url, title, length, id);
+            TermVector vector = termVectorEncoder.read(stream);
+            return new DocumentInfo(url, title, length, id, vector);
         }
     }
 }

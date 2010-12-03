@@ -11,13 +11,15 @@ namespace Concordia.Spimi
         public int Length { get; private set; }
         public string SpecialIdentifier { get; private set; }
         public string Title { get; private set; }
+        public TermVector TermVector { get; private set; }
 
-        public DocumentInfo(string uri, string title, int length, string identifier)
+        public DocumentInfo(string uri, string title, int length, string identifier, TermVector termVector)
         {
             this.Uri = uri;
             this.Length = length;
             this.SpecialIdentifier = identifier;
             this.Title = title;
+            this.TermVector = termVector;
         }
 
         public override bool Equals(object obj)
@@ -27,6 +29,11 @@ namespace Concordia.Spimi
                 this.Uri.Equals(other.Uri)
                 && this.Length.Equals(other.Length)
                 && this.SpecialIdentifier.Equals(other.SpecialIdentifier);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Uri+SpecialIdentifier).GetHashCode();
         }
 
         public override string ToString()

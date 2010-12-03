@@ -10,6 +10,10 @@ namespace Concordia.Spimi
 {
     class HtmlParser : IParser
     {
+        static string[] TagsToParse =
+        {
+            "p", "h1","h2","h3","h4","h5","h6","div", "title"
+        };
 
         public IEnumerable<Document> ExtractDocuments(Stream file)
         {
@@ -18,22 +22,30 @@ namespace Concordia.Spimi
             htmlDoc.Load(file);
 
             bool isFirst = true;
-            foreach (HtmlNode node in htmlDoc.DocumentNode.ChildNodes)
+            // TODO: There must be a better way of doing this
+            foreach (string tag in TagsToParse)
             {
-                if (isFirst)
+                HtmlNodeCollection nodes = htmlDoc.DocumentNode.SelectNodes("//" + tag);
+                if (nodes != null)
                 {
-                    isFirst = false;
-                }
-                else
-                {
-                    content.Append(" ");
-                }
+                    foreach (HtmlNode node in nodes)
+                    {
+                        if (isFirst)
+                        {
+                            isFirst = false;
+                        }
+                        else
+                        {
+                            content.Append(" ");
+                        }
 
-                content.Append(node.InnerText);
+                        content.Append(node.InnerText.Replace("\n", " "));
+                    }
+                }
             }
 
             HtmlNodeCollection titleNodes = htmlDoc.DocumentNode.SelectNodes("html/head/title");
-            string title = titleNodes == null ? "" : titleNodes.ElementAt(0).InnerText;
+            string title = titleNodes == null ? "" : titleNodes.ElementAt(0).InnerText.Replace("\n", " ");
 
             string text = Regex.Replace(content.ToString(), @"(\s+)", @" ").Trim();
 

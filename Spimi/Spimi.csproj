@@ -91,9 +91,12 @@
   <ItemGroup>
     <Compile Include="BestMatchRanker.cs" />
     <Compile Include="BinarySearch.cs" />
+    <Compile Include="ClusterFinder.cs" />
     <Compile Include="CollectionMetadataWriter.cs" />
     <Compile Include="DocumentInfo.cs" />
     <Compile Include="DocumentInfoEncoder.cs" />
+    <Compile Include="TermVector.cs" />
+    <Compile Include="TermVectorEncoder.cs" />
     <Compile Include="WebCrawler.cs" />
     <Compile Include="HtmlParser.cs" />
     <Compile Include="IndexMetadata.cs" />

@@ -54,8 +54,12 @@ namespace Concordia.Spimi
                 // Extract the terms from the document and add the document to their respective postings lists
                 long docId = nextDocumentId++;
                 int termsInDoc = 0;
-                foreach (string term in lexer.Tokenize(document.Body))
+                IEnumerable<string> terms = lexer.Tokenize(document.Body);
+                TermVector vector = new TermVector();
+                foreach (string term in terms)
                 {
+                    vector.AddTerm(term);
+
                     termIndexBlockWriter.AddPosting(term, docId);
                     if (termIndexBlockWriter.Postings == maxPostingCountPerBlock)
                     {
@@ -67,7 +71,7 @@ namespace Concordia.Spimi
                 }
 
                 this.metadataWriter.AddDocumentInfo(docId,
-                    new DocumentInfo(uri, document.Title, termsInDoc, document.SpecialIdentifier));
+                    new DocumentInfo(uri, document.Title, termsInDoc, document.SpecialIdentifier, vector));
             }
         }
 
