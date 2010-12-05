@@ -33,9 +33,9 @@ namespace Concordia.Spimi
                 bestCluster = latestCluster;
                 latestCluster = new List<long>[k];
                          
-                Cluster(documentIds, centroids, latestCluster);
-                newRss = CalculateRss(latestCluster);
-
+                this.Cluster(documentIds, centroids, latestCluster);
+                centroids = this.CalculateCentroids(latestCluster);
+                newRss = this.CalculateRss(latestCluster);
                 iterationCount++;
             }
             while (bestRss > newRss || iterationCount == 9);
@@ -50,6 +50,20 @@ namespace Concordia.Spimi
             }
 
             return clusters;
+        }
+
+        TermVector[] CalculateCentroids(List<long>[] clusters)
+        {
+            TermVector[] centoids = new TermVector[clusters.Length];
+            int clusterIndex = 0;
+            foreach (List<long> cluster in clusters)
+            {
+                centoids[clusterIndex] = TermVector.GetCentroid(
+                    this.GetTermVectors(this.metadata.GetDocuments(cluster)));
+                clusterIndex++;
+            }
+
+            return centoids;
         }
 
         private double CalculateRss(IEnumerable<IEnumerable<long>> clusters)
