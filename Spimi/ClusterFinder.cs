@@ -97,7 +97,8 @@ namespace Concordia.Spimi
                 int minDistanceIndex = 0;
                 foreach (TermVector centroid in centroids)
                 {
-                    double distance = termVector.CosineSimilarity(centroid);
+                    //double distance = termVector.CosineSimilarity(centroid);
+                    double distance = (centroid - termVector).EuclideanLength();
                     if (distance < minDistance)
                     {
                         minDistance = distance;

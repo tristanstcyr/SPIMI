@@ -62,7 +62,7 @@ namespace Concordia.Spimi
                     QueryEngine queryEngine = new QueryEngine(index, indexMetadata);
 
                     // 3- Query the index
-                    Console.WriteLine("Done! Please query the corpus:");
+                    Console.WriteLine("Done! Please use one of the following commands: \n/query <term1> <term2>\n/cluster <k>\n");
 
                     QueryCli cli = new QueryCli(indexMetadata, index);
                     cli.Run();
@@ -103,7 +103,7 @@ namespace Concordia.Spimi
                     DocumentInfo docInfo;
                     if (metadata.TryGetDocumentInfo(docId, out docInfo))
                     {
-                        const int maxLength = 30;
+                        const int maxLength = 45;
                         string title;
                         if (docInfo.Title.Length > maxLength)
                         {
@@ -115,7 +115,8 @@ namespace Concordia.Spimi
                         }
 
                         double score = queryEngine.Scores[docId];
-                        Console.WriteLine(i + "\t" + score + "\t" + title);
+                        string shortScore = score.ToString().Length > 4 ? score.ToString().Substring(0, 4) : score.ToString();
+                        Console.WriteLine(i + "\t" + shortScore + "\t" + title);
                         i++;
                     }
                     else
@@ -123,7 +124,7 @@ namespace Concordia.Spimi
                         Console.WriteLine("Found document id in posting list that wasn't indexed in metadata: " + docId);
                     }
                 }
-                Console.WriteLine(results.Count + " hit(s). (enter hit rank number to read entry, or query again)");
+                Console.WriteLine(results.Count + " hit(s). (enter \"/show <hit rank number>\" to read entry, or /query again)");
             }
 
             public void ShowResult(string param)
@@ -152,7 +153,7 @@ namespace Concordia.Spimi
                     Console.Write("> ");
                     string input = Console.ReadLine();
                     Match matches = Regex.Match(input, "^/(?<command>[a-z]*) (?<arguments>.*)$");
-                    if (matches.Groups.Count != 3)
+                    if (matches.Groups.Count < 2)
                     {
                         PrintUsage();
                         continue;
@@ -164,7 +165,7 @@ namespace Concordia.Spimi
                     switch (command)
                     {
                         case "query":
-                            this.ProcessQuery(input);
+                            this.ProcessQuery(args);
                             break;
                         case "show":
                             this.ShowResult(args);
@@ -184,27 +185,34 @@ namespace Concordia.Spimi
 
             private void Cluster(string args)
             {
+                int k = int.Parse(args);
+                Console.WriteLine("Clustering...");
                 KMeansClusterFinder clusterFinder = new KMeansClusterFinder(this.metadata, this.index);
                 IList<long> allDocIds = this.metadata.GetDocumentIds();
-                long[][] clusters = clusterFinder.Cluster(allDocIds, 10);
+                long[][] clusters = clusterFinder.Cluster(allDocIds, k);
+                int i = 1;
+                Console.WriteLine("Done! Here are top terms for each cluster:");
+                
                 foreach(long[] cluster in clusters)
                 {
                     IEnumerable<string> topTerms = TermVector.GetCentroid(
                         this.metadata.GetDocuments(cluster).Select(
-                        docInfo => docInfo.TermVector)).GetLengthSortedDimensions().Take(4);
-
+                        docInfo => docInfo.TermVector)).GetLengthSortedDimensions().Take(6);
+                    Console.Write(i + ": ");
                     if (topTerms.Count() == 0)
                     {
-                        Console.WriteLine("Empty index");
+                        Console.Write("Empty cluster!");
+                        Console.WriteLine();
                     }
                     else
                     {
                         foreach (string term in topTerms)
                         {
-                            Console.Write(term+" | ");
+                            Console.Write(term+"  ");
                         }
                         Console.WriteLine();
                     }
+                    i++;
                 }
             }
 

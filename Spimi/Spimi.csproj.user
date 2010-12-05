@@ -14,6 +14,6 @@
     <StartArguments>"encs.concordia.ca" "index" "metadata"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <StartArguments>"..\..\..\..\reuters21578" "..\..\..\..\index" "..\..\..\..\metadataindex"</StartArguments>
+    <StartArguments>"..\..\..\..\encs.concordia.ca" "..\..\..\..\index" "..\..\..\..\metadataindex"</StartArguments>
   </PropertyGroup>
 </Project>
