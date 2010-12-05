@@ -34,7 +34,7 @@
     }
 
     function addQueryResult(rank, title, uri, score) {
-        $("#queryResults").append("<tr><td>" + rank + ".</td><td>" + title + "</td><td>" + score.toString().substring(0,4) + "</td><td><a href\=" + uri + "\">" + uri + "<a></td></tr>");
+        $("#queryResults").append("<tr><td>" + rank + ".</td><td>" + title + "</td><td>" + score.toString().substring(0,4) + "</td><td><a href=\"" + uri + "\">" + uri + "<a></td></tr>");
     }
 
     function getQueryResults() {
