@@ -63,7 +63,7 @@ namespace Concordia.Spimi
                     termIndexBlockWriter.AddPosting(term, docId);
                     if (termIndexBlockWriter.Postings == maxPostingCountPerBlock)
                     {
-                        // 
+                        // Write block to disk
                         this.FlushBlockWriter();
                     }
                     termsInDoc++;

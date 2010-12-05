@@ -10,6 +10,9 @@ namespace Concordia.Spimi
     class BasicLexer : ILexer
     {
         HashSet<char> ignoreList = new HashSet<char>();
+        private List<string> stopList;
+
+
 
         public BasicLexer()
         {
@@ -18,6 +21,10 @@ namespace Concordia.Spimi
             {
                 ignoreList.Add(c);
             }
+
+            // Remove html encodings and most common semantically nonselective term of Reuters-RCV1 (see Manning IR textbook)
+            this.stopList = new List<string>() {"&quot;", "&lt;", "&gt;", "&amp;", "a", "an", "and", "are", "at", "to", "be", "by", "for", "from", "has", "he", "in",
+                                                "is", "it", "its", "of", "on", "that", "the", "to", "was", "were", "will", "with"};
         }
 
         /// <summary>
@@ -36,7 +43,11 @@ namespace Concordia.Spimi
                     {
                         string result = token.ToString().ToLower();
                         token.Clear();
-                        yield return result;
+                        if (!this.stopList.Contains(result))    // dont return stop words
+                        {
+                            yield return result;
+                        }
+                        
                     }
                 }
                 else
