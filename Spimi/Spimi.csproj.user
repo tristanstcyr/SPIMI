@@ -14,6 +14,6 @@
     <StartArguments>"reuters21578" "index" "metadata"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
-    <StartArguments>"..\..\..\..\reuters21578" "..\..\..\..\index"</StartArguments>
+    <StartArguments>"..\..\..\..\reuters21578" "..\..\..\..\index" "..\..\..\..\metadataindex"</StartArguments>
   </PropertyGroup>
 </Project>
