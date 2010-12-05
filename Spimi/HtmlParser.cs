@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Concordia.Spimi
 {
-    class HtmlParser : IParser
+    public class HtmlParser : IParser
     {
         static string[] TagsToParse =
         {

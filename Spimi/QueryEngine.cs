@@ -6,7 +6,7 @@ namespace Concordia.Spimi
     /// <summary>
     /// Query an index through this class.
     /// </summary>
-    class QueryEngine
+    public class QueryEngine
     {
         private TermIndex index;
         private IndexMetadata indexMetadata;

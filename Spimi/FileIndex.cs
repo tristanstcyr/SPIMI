@@ -10,7 +10,7 @@ namespace Concordia.Spimi
     /// <summary>
     /// The final merged index can be used through this class.
     /// </summary>
-    class FileIndex<K, V> : IIndex<K, V> where K : IComparable<K>
+    public class FileIndex<K, V> : IIndex<K, V> where K : IComparable<K>
     {
         private const int PointerByteSize = sizeof(Int64);
 

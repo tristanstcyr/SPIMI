@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 namespace Concordia.Spimi
 {
-    interface IIndex<K, V> where K : IComparable<K>
+    public interface IIndex<K, V> where K : IComparable<K>
     {
         bool TryGet(K key, out V value);
     }

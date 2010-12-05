@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Concordia.Spimi
 {
-    interface IParser
+    public interface IParser
     {
         IEnumerable<Document> ExtractDocuments(Stream file);
     }

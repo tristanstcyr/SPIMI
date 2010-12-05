@@ -9,7 +9,7 @@ using System.Diagnostics.Contracts;
 
 namespace Concordia.Spimi
 {
-    class IndexMetadata
+    public class IndexMetadata
     {
         FileIndex<long, DocumentInfo> documentsInfo;
 

@@ -7,7 +7,7 @@ using System.Diagnostics.Contracts;
 
 namespace Concordia.Spimi
 {
-    class WebCrawler
+    public class WebCrawler
     {
         DirectoryInfo directory;
 

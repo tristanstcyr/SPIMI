@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace Concordia.Spimi
 {
-    class TermVector
+    public class TermVector
     {
         Dictionary<string, int> vector;
 

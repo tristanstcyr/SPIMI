@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Concordia.Spimi
 {
-    class Document
+    public class Document
     {
         public Document(string docId, string title, string body)
         {

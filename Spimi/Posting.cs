@@ -6,7 +6,7 @@ using System.Text;
 namespace Concordia.Spimi
 {
     [Serializable]
-    class Posting
+    public class Posting
     {
         public long DocumentId { get; set; }
         public int Frequency { get; set; }

@@ -9,7 +9,7 @@ namespace Concordia.Spimi
     /// of 1) parsing and tokenizing a corpus, 2) building the dictionary
     /// and posting lists.
     /// </summary>
-    class SpimiIndexer
+    public class SpimiIndexer
     {
         static int maxPostingCountPerBlock = 10000;
 

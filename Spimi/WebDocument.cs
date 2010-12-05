@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Concordia.Spimi
 {
-    class WebDocument
+    public class WebDocument
     {
         public string Uri { get; private set; }
 

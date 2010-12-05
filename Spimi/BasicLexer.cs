@@ -7,7 +7,7 @@ namespace Concordia.Spimi
     /// <summary>
     /// Lexer that can read and tokenize a document
     /// </summary>
-    class BasicLexer : ILexer
+    public class BasicLexer : ILexer
     {
         HashSet<char> ignoreList = new HashSet<char>();
         private List<string> stopList;

@@ -6,7 +6,7 @@ using System.Diagnostics.Contracts;
 
 namespace Concordia.Spimi
 {
-    class KMeansClusterFinder
+    public class KMeansClusterFinder
     {
         IndexMetadata metadata;
         TermIndex index;
