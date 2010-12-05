@@ -40,7 +40,7 @@ namespace Concordia.Spimi
                         inADoc = false;
                         string body = bodyBuilder.ToString();
                         bodyBuilder.Clear();
-                        yield return new Document(docId, body);     // return the document to the calling iterating code
+                        yield return new Document(docId, "", body);     // return the document to the calling iterating code
                     }
                     else if (skipRegex.IsMatch(line))   // lines that can be skipped because they have no content
                     {

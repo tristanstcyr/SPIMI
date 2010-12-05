@@ -19,8 +19,8 @@ namespace Concordia.SpimiTests
             CollectionMetadataWriter writer = 
                 new CollectionMetadataWriter(stream);
             
-            DocumentInfo doc1 = new DocumentInfo("http://www.google.com/index.html", 150, "#Section1");
-            DocumentInfo doc2 = new DocumentInfo("http://www.google.com/index.html", 250, "#Section2");
+            DocumentInfo doc1 = new DocumentInfo("http://www.google.com/index.html", "Google", 150, "#Section1", null);
+            DocumentInfo doc2 = new DocumentInfo("http://www.google.com/index.html", "Google", 250, "#Section2", null);
             writer.AddDocumentInfo(0, doc1);
             writer.AddDocumentInfo(1, doc2);
             writer.WriteOut();

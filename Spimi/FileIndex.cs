@@ -95,6 +95,18 @@ namespace Concordia.Spimi
             return true;
         }
 
+        public V this[K key]
+        {
+            get
+            {
+                V value;
+                if (this.TryGet(key, out value))
+                    return value;
+                throw new IndexOutOfRangeException("File index does not have key " + key);
+            }
+      
+        }
+
         private void MoveStreamToEntryStart(long index)
         {
             Contract.Requires(index < this.EntryCount);

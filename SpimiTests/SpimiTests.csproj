@@ -76,6 +76,7 @@
     <Compile Include="CollectionMetadataTests.cs" />
     <Compile Include="DocumentInfoEncoderTests.cs" />
     <Compile Include="FileIndexTests.cs" />
+    <Compile Include="HtmlParserTests.cs" />
     <Compile Include="PostingListEncoderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryEngineTests.cs" />

@@ -7,32 +7,41 @@ namespace Concordia.Spimi
 {
     class DocumentInfo
     {
-        public string Url { get; private set; }
+        public string Uri { get; private set; }
         public int Length { get; private set; }
-        public string Identifier { get; private set; }
+        public string SpecialIdentifier { get; private set; }
+        public string Title { get; private set; }
+        public TermVector TermVector { get; private set; }
 
-        public DocumentInfo(string url, int length, string identifier)
+        public DocumentInfo(string uri, string title, int length, string identifier, TermVector termVector)
         {
-            this.Url = url;
+            this.Uri = uri;
             this.Length = length;
-            this.Identifier = identifier;
+            this.SpecialIdentifier = identifier;
+            this.Title = title;
+            this.TermVector = termVector;
         }
 
         public override bool Equals(object obj)
         {
             DocumentInfo other = obj as DocumentInfo;
             return obj != null &&
-                this.Url.Equals(other.Url)
+                this.Uri.Equals(other.Uri)
                 && this.Length.Equals(other.Length)
-                && this.Identifier.Equals(other.Identifier);
+                && this.SpecialIdentifier.Equals(other.SpecialIdentifier);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Uri+SpecialIdentifier).GetHashCode();
         }
 
         public override string ToString()
         {
             return "DocumentInfo{" +
-                "Url=" + this.Url + ", " +
+                "Uri=" + this.Uri + ", " +
                 "Length=" + this.Length + ", " +
-                "Identifier=" + this.Identifier + "}";
+                "Identifier=" + this.SpecialIdentifier + "}";
         }
     }
 }

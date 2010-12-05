@@ -30,6 +30,8 @@ namespace Concordia.Spimi
 
             long N = indexMetadata.CollectionLengthInDocuments;
             int df = postings.Count;
+            if (df == 0)
+                return 0;
             double idf = Math.Log10(N / df);
 
             if (postings.Where(p => p.DocumentId == docId).Count() == 0)

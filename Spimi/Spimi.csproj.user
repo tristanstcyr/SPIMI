@@ -11,7 +11,7 @@
     <VerifyUploadedFiles>false</VerifyUploadedFiles>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
-    <StartArguments>"reuters21578" "index" "metadata"</StartArguments>
+    <StartArguments>"encs.concordia.ca" "index" "metadata"</StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <StartArguments>"..\..\..\..\reuters21578" "..\..\..\..\index" "..\..\..\..\metadataindex"</StartArguments>
