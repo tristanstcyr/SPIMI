@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Linq;
 
 namespace Concordia.Spimi
 {
@@ -10,21 +11,34 @@ namespace Concordia.Spimi
     public class BasicLexer : ILexer
     {
         HashSet<char> ignoreList = new HashSet<char>();
-        private List<string> stopList;
+        private string[] stopList;
 
 
 
         public BasicLexer()
         {
-            char[] ignore = {' ', '\t', '\n', '.', ',', '\r'};
+            char[] ignore = "\t\n.,\r-;:|()[]?! <>\"".ToCharArray();
             foreach (char c in ignore)
-            {
                 ignoreList.Add(c);
-            }
 
-            // Remove html encodings and most common semantically nonselective term of Reuters-RCV1 (see Manning IR textbook)
-            this.stopList = new List<string>() {"&quot;", "&lt;", "&gt;", "&amp;", "a", "an", "and", "are", "at", "to", "be", "by", "for", "from", "has", "he", "in",
-                                                "is", "it", "its", "of", "on", "that", "the", "to", "was", "were", "will", "with"};
+            this.stopList =
+                ("a,able,about,across,after,all,almost,also,am,among,an,and," +
+                "any,are,as,at,be,because,been,but,by,can,cannot,could,dear," +
+                "did,do,does,either,else,ever,every,for,from,get,got,had,has," +
+                "have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its," +
+                "just,least,let,like,likely,may,me,might,most,must,my,neither," +
+                "no,nor,not,of,off,often,on,only,or,other,our,own,rather,said," +
+                "say,says,she,should,since,so,some,than,that,the,their,them,then," +
+                "there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when," +
+                "where,which,while,who,whom,why,will,with,would,yet,you,your").Split(',');
+        }
+
+
+        private bool isValidTerm(string term)
+        {
+            return !this.stopList.Contains(term) &&
+                !term.Contains("&") &&
+                term.Length > 1;
         }
 
         /// <summary>
@@ -43,7 +57,7 @@ namespace Concordia.Spimi
                     {
                         string result = token.ToString().ToLower();
                         token.Clear();
-                        if (!this.stopList.Contains(result))    // dont return stop words
+                        if (this.isValidTerm(result))    // dont return stop words
                         {
                             yield return result;
                         }

@@ -38,6 +38,7 @@ namespace Concordia.Spimi
                         {
                             content.Append(" ");
                         }
+
                         content.Append(node.InnerText.Replace("\n", " "));
                     }
                 }
