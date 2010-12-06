@@ -97,6 +97,11 @@ namespace Concordia.Spimi
             return this.vector.OrderBy(pair => pair.Value).Select(p => p.Key);
         }
 
+        public IEnumerable<string> GetNonZeroDimensions()
+        {
+            return this.vector.Select(p => p.Key);
+        }
+
         public static TermVector GetCentroid(IEnumerable<TermVector> vectors)
         {
             Dictionary<string, long> sum = new Dictionary<string, long>();

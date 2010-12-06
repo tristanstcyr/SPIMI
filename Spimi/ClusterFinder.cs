@@ -109,6 +109,7 @@ namespace Concordia.Spimi
                 int clusterIndex = 0;
                 double minDistance = double.MaxValue;
                 int minDistanceIndex = 0;
+
                 foreach (TermVector centroid in centroids)
                 {
                     //double distance = termVector.CosineSimilarity(centroid);

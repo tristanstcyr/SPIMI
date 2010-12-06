@@ -183,6 +183,21 @@ namespace Concordia.Spimi
                 }
             }
 
+            public double GetIdf(string term)
+            {
+                return ((double)this.metadata.CollectionLengthInDocuments) / this.index[term].Count;
+            }
+
+            private long ClusterTermFrequency(IEnumerable<long> cluster, string term)
+            {
+                return this.metadata.GetDocuments(cluster).Sum(d => d.TermVector.GetDimensionLength(term));
+            }
+
+            private double ClusterTfIdf(IEnumerable<long> cluster, string term)
+            {
+                return this.ClusterTermFrequency(cluster, term) * this.GetIdf(term);
+            }
+
             private void Cluster(string args)
             {
                 int k = int.Parse(args);
@@ -195,9 +210,20 @@ namespace Concordia.Spimi
                 
                 foreach(long[] cluster in clusters)
                 {
-                    IEnumerable<string> topTerms = TermVector.GetCentroid(
-                        this.metadata.GetDocuments(cluster).Select(
-                        docInfo => docInfo.TermVector)).GetLengthSortedDimensions().Take(6);
+                    IEnumerable<DocumentInfo> clusterDocuments = this.metadata.GetDocuments(cluster);
+                    TermVector sum = new TermVector();
+                    foreach (TermVector vector in clusterDocuments.Select(d => d.TermVector))
+                    {
+                        sum += vector;
+                    }
+
+                    IEnumerable<string> topTerms = 
+                        TermVector.GetCentroid(this.metadata.GetDocuments(cluster)
+                            .Select(docInfo => docInfo.TermVector))
+                        .GetNonZeroDimensions()
+                        .OrderBy(term => sum.GetDimensionLength(term)*this.GetIdf(term))
+                        .Take(6);
+
                     Console.Write(i + ": ");
                     if (topTerms.Count() == 0)
                     {

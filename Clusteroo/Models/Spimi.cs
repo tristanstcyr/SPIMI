@@ -10,9 +10,9 @@ using Clusteroo.Models;
 
 public class Spimi
 {
-    string directory = @"C:\dev\concordia\479\spimi\www.encs.concordia.ca";
-    string indexFilePath = @"C:\dev\concordia\479\spimi\index";
-    string metadataFilePath = @"C:\dev\concordia\479\spimi\metadataindex";
+    string directory = @"C:\Users\tristan\Downloads\www.arstechnica.com";
+    string indexFilePath = @"C:\Users\tristan\Downloads\index";
+    string metadataFilePath = @"C:\Users\tristan\Downloads\metadataindex";
 
     public void Index()
     {
@@ -115,16 +115,31 @@ public class Spimi
 
                 foreach (long[] cluster in clusters)
                 {
+                    // Get the term frequencies in the collection
                     IEnumerable<DocumentInfo> clusterDocuments = indexMetadata.GetDocuments(cluster);
-                    IEnumerable<string> topTerms = TermVector.GetCentroid(
-                        clusterDocuments.Select(
-                        docInfo => docInfo.TermVector)).GetLengthSortedDimensions().Take(6);
+                    TermVector sum = new TermVector();
+                    foreach (TermVector vector in clusterDocuments.Select(d => d.TermVector))
+                        sum += vector;
+
+                    // Order terms in the collection by tf-idf
+                    IEnumerable<string> topTerms = 
+                        TermVector.GetCentroid(clusterDocuments.Select(
+                            docInfo => docInfo.TermVector))
+                        .GetNonZeroDimensions()
+                        .OrderBy(term => sum.GetDimensionLength(term)*this.GetIdf(index, indexMetadata, term))
+                        .Take(10);
                    
-                    clusterResults.Add(new ClusterResult(topTerms.ToList(), clusterDocuments.Select(docInfo => docInfo.Uri).ToList()));
+                    clusterResults.Add(new ClusterResult(topTerms.ToList(), 
+                        clusterDocuments.Select(docInfo => docInfo.Uri).ToList()));
                 }
 
                 return clusterResults;
             }
         }
+    }
+
+    private double GetIdf(TermIndex index, IndexMetadata metadata, string term)
+    {
+        return ((double)metadata.CollectionLengthInDocuments) / index[term].Count;
     }
 }
