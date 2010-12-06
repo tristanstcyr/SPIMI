@@ -74,6 +74,7 @@
     <Compile Include="Models\AccountModels.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Models\IndexingStats.cs" />
     <Compile Include="Models\QueryResult.cs" />
     <Compile Include="Models\Spimi.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

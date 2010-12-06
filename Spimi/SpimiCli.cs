@@ -185,7 +185,8 @@ namespace Concordia.Spimi
 
             public double GetIdf(string term)
             {
-                return ((double)this.metadata.CollectionLengthInDocuments) / this.index[term].Count;
+                double idf = Math.Log(((double)this.metadata.CollectionLengthInDocuments) / this.index[term].Count);
+                return idf;
             }
 
             private long ClusterTermFrequency(IEnumerable<long> cluster, string term)
@@ -221,7 +222,7 @@ namespace Concordia.Spimi
                         TermVector.GetCentroid(this.metadata.GetDocuments(cluster)
                             .Select(docInfo => docInfo.TermVector))
                         .GetNonZeroDimensions()
-                        .OrderBy(term => sum.GetDimensionLength(term)*this.GetIdf(term))
+                        .OrderByDescending(term => sum.GetDimensionLength(term)*this.GetIdf(term))
                         .Take(6);
 
                     Console.Write(i + ": ");

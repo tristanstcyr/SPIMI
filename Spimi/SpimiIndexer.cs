@@ -54,9 +54,8 @@ namespace Concordia.Spimi
                 // Extract the terms from the document and add the document to their respective postings lists
                 long docId = nextDocumentId++;
                 int termsInDoc = 0;
-                IEnumerable<string> terms = lexer.Tokenize(document.Body);
                 TermVector vector = new TermVector();
-                foreach (string term in terms)
+                foreach (string term in lexer.Tokenize(document.Body))
                 {
                     vector.AddTerm(term);
 

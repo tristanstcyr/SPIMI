@@ -32,8 +32,8 @@ namespace Concordia.Spimi
                 bestRss = newRss;
                 bestCluster = latestCluster;
                 latestCluster = new List<long>[k];
-                         
                 this.Cluster(documentIds, centroids, latestCluster);
+                //Contract.Assert(latestCluster.Select(cluster => cluster.Count == 0).Count() == 0);
                 centroids = this.CalculateCentroids(latestCluster);
                 newRss = this.CalculateRss(latestCluster);
                 iterationCount++;
@@ -139,10 +139,12 @@ namespace Concordia.Spimi
 
                 do
                 {
-                    seedDocId = documentsToCluster[random.Next(0, (int)documentsToCluster.Count)];
+                    int randomIndex = random.Next(0, (int)documentsToCluster.Count - 1);
+                    seedDocId = documentsToCluster[randomIndex];
                 }
                 while (seeds.Contains(seedDocId));
                 centroids[seedIndex] = metadata[seedDocId].TermVector;
+                seeds.Add(seedIndex);
             }
 
             return centroids;
