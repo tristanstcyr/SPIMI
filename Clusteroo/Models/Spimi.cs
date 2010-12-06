@@ -10,28 +10,26 @@ using Clusteroo.Models;
 
 public class Spimi
 {
-    string directory = @"C:\Users\tristan\Downloads\www.arstechnica.com";
+    string directory = @"C:\Users\tristan\Downloads\";
     string indexFilePath = @"C:\Users\tristan\Downloads\index";
     string metadataFilePath = @"C:\Users\tristan\Downloads\metadataindex";
 
-    public void Index()
+    public IndexingStats Index(string site)
     {
-        
-        Console.WriteLine("Welcome to Spimi!");
+        IndexingStats result = new IndexingStats();
 
-        DirectoryInfo directoryInfo = new DirectoryInfo(directory);
+        DirectoryInfo directoryInfo = new DirectoryInfo(directory + site);
         if (!directoryInfo.Exists)
         {
-            Console.WriteLine("Directory could not be found");
-            return;
+            return result;
         }
 
+        DateTime start = DateTime.Now;
         using (FileStream indexFileStream = File.Open(indexFilePath, FileMode.Create))
         {
             using (FileStream metadataFileStream = File.Open(metadataFilePath, FileMode.Create))
             {
                 // Index the corpus
-                Console.WriteLine("Parsing corpus and creating index blocks...");
                 SpimiIndexer indexer = new SpimiIndexer(
                     new BasicLexer(), 
                     new HtmlParser(), 
@@ -46,16 +44,14 @@ public class Spimi
                     stream.Close();
                 }
 
-                // 2- Build the final index
-                Console.WriteLine("Merging blocks into one index...");
                 indexer.WriteOut();
-
-                
-
-                // 3- Query the index
-                Console.WriteLine("Done! Please use one of the following commands: \n/query <term1> <term2>\n/cluster <k>\n");
+                IndexMetadata indexMetadata = new IndexMetadata(metadataFileStream);
+                result.CollectionSize = indexMetadata.CollectionLengthInDocuments;
             }
         }
+        DateTime end = DateTime.Now;
+        result.IndexingTime = (end - start).TotalMilliseconds;
+        return result;
     }
 
     public IList<QueryResult> Query(string query)
@@ -73,7 +69,7 @@ public class Spimi
                 
                 int i = 1;
                 Console.WriteLine("rank\trsv score\ttitle");
-                foreach (long docId in results.Take(25))
+                foreach (long docId in results.Take(500))
                 {
                     DocumentInfo docInfo;
                     if (indexMetadata.TryGetDocumentInfo(docId, out docInfo))
@@ -119,15 +115,16 @@ public class Spimi
                     IEnumerable<DocumentInfo> clusterDocuments = indexMetadata.GetDocuments(cluster);
                     TermVector sum = new TermVector();
                     foreach (TermVector vector in clusterDocuments.Select(d => d.TermVector))
+                    {
                         sum += vector;
+                    }
 
-                    // Order terms in the collection by tf-idf
-                    IEnumerable<string> topTerms = 
-                        TermVector.GetCentroid(clusterDocuments.Select(
-                            docInfo => docInfo.TermVector))
+                    IEnumerable<string> topTerms =
+                        TermVector.GetCentroid(indexMetadata.GetDocuments(cluster)
+                            .Select(docInfo => docInfo.TermVector))
                         .GetNonZeroDimensions()
-                        .OrderBy(term => sum.GetDimensionLength(term)*this.GetIdf(index, indexMetadata, term))
-                        .Take(10);
+                        .OrderByDescending(term => sum.GetDimensionLength(term) * this.GetIdf(index, indexMetadata, term))
+                        .Take(6);
                    
                     clusterResults.Add(new ClusterResult(topTerms.ToList(), 
                         clusterDocuments.Select(docInfo => docInfo.Uri).ToList()));
@@ -140,6 +137,7 @@ public class Spimi
 
     private double GetIdf(TermIndex index, IndexMetadata metadata, string term)
     {
-        return ((double)metadata.CollectionLengthInDocuments) / index[term].Count;
+        double idf = Math.Log(((double)metadata.CollectionLengthInDocuments) / index[term].Count);
+        return idf;
     }
 }

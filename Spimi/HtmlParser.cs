@@ -12,7 +12,7 @@ namespace Concordia.Spimi
     {
         static string[] TagsToParse =
         {
-            "p", "h1","h2","h3","h4","h5","h6","div", "title"
+            "p", "h1","h2","h3","h4","h5","h6", "title"
         };
 
         public IEnumerable<Document> ExtractDocuments(Stream file)
@@ -38,7 +38,6 @@ namespace Concordia.Spimi
                         {
                             content.Append(" ");
                         }
-
                         content.Append(node.InnerText.Replace("\n", " "));
                     }
                 }

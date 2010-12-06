@@ -13,16 +13,18 @@ namespace Clusteroo.Controllers
     {
         public ActionResult Index()
         {
-            ViewData["Message"] = "Welcome to Clusteroo!";
-
-            if (Session["spimi"] == null)
-            {
-                Spimi spimi = new Spimi();
-                spimi.Index();
-                Session["spimi"] = spimi;
-            }
-
+            if(Session["spimi"] != null) ViewData["OkToQuery"] = true;
             return View();
+        }
+
+        public JsonResult Reindex(string site)
+        {
+            Session["spimi"] = null;
+            Spimi spimi = new Spimi();
+            IndexingStats stats = spimi.Index(site);
+            Session["spimi"] = spimi;
+
+            return Json(stats, JsonRequestBehavior.AllowGet);
         }
         
         public JsonResult Query(string query)

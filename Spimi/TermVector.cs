@@ -37,9 +37,9 @@ namespace Concordia.Spimi
 
         public void AddTerm(string term)
         {
-            int count = GetDimensionLength(term);
+            int count = this.GetDimensionLength(term);
             vector.Remove(term);
-            vector.Add(term, GetDimensionLength(term) + 1);
+            vector.Add(term, count + 1);
         }
 
         public double CosineSimilarity(TermVector centroid)
