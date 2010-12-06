@@ -351,3 +351,9 @@ div#title h1
 {
     width: 6em;
 }
+
+
+#indexFields 
+{
+    float: left;
+}
