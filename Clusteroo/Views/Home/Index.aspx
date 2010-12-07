@@ -85,10 +85,10 @@
 
     function enableFields(enable) {
         if (enable) {
-            $("input").removeAttr("disabled");
+            $("input, select").removeAttr("disabled");
         }
         else {
-            $("input").attr("disabled", "disabled");
+            $("input, select").attr("disabled", "disabled");
         }
     }
 
@@ -124,7 +124,9 @@
                 if (hits == 500) {
                     hitsString = "top 500";
                 }
-                $("#resultsTitle").text("Query results (" + hitsString + " hits, " + (elapsed / 1000).toString().substring(0, 4) + " seconds)");
+                $("#resultsTitle").text("Query results (" + hitsString + " hits, "
+                                                + (elapsed / 1000).toString().substring(0, 4) + " seconds, " 
+                                                + $("select option:selected").attr("value") + ")");
 
                 addQueryResult(index + 1, res.Title, res.Uri, res.Score);
             });
