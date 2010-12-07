@@ -357,3 +357,8 @@ div#title h1
 {
     float: left;
 }
+
+#indexBtn, #clusterBtn, #queryBtn
+{
+    width: 85px;
+}

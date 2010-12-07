@@ -10,22 +10,26 @@ namespace Concordia.Spimi
     {
         private TermIndex index;
         private IndexMetadata indexMetadata;
+        private TfIdfRanker tfIdfRanker;
         private BestMatchRanker bestMatchRanker;
+        private RankingMode lastRankingMode;
 
         public QueryEngine(TermIndex index, IndexMetadata indexMetadata)
         {
             this.index = index;
             this.indexMetadata = indexMetadata;
+            this.tfIdfRanker = new TfIdfRanker(index, indexMetadata);
             this.bestMatchRanker = new BestMatchRanker(index, indexMetadata);
         }
 
         /// <summary>
         /// Returns the documents in which a term can be found.
-        /// If more than one query terms are entered, the intersection
+        /// If more than one query terms are entered, the union
         /// of those terms' postings lists are returned (i.e. the query string
-        /// is interpreted as and "AND"-query)
+        /// is interpreted as and "OR"-query).
+        /// Results are ranked by BM25 RSV values.
         /// </summary>
-        public IList<long> Query(string query)
+        public IList<long> Query(string query, RankingMode rankingMode)
         {
             
             PostingsDocumentIdComparer postingDocIdComparer = new PostingsDocumentIdComparer();
@@ -41,8 +45,16 @@ namespace Concordia.Spimi
                     allHits.Add(hit);
             }
 
-            // 2) Rank the postings 
-            return bestMatchRanker.Rank(terms, allHits);
+            // 2) Rank the postings
+            lastRankingMode = rankingMode;
+            if (rankingMode == RankingMode.TFIDF)
+            {
+                return tfIdfRanker.Rank(terms, allHits);
+            }
+            else
+            {
+                return bestMatchRanker.Rank(terms, allHits);
+            }
         }
 
         private HashSet<long> getHits(string term)
@@ -76,7 +88,18 @@ namespace Concordia.Spimi
 
         public Dictionary<long, double> Scores
         {
-            get { return bestMatchRanker.Scores; }
+            get 
+            {
+                if (lastRankingMode == RankingMode.TFIDF)
+                {
+                    return tfIdfRanker.Scores;
+                }
+                else
+                {
+                    return bestMatchRanker.Scores; 
+                }
+            
+            }
         }
     }
 }

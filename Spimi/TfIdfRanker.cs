@@ -5,17 +5,17 @@ using System.Text;
 
 namespace Concordia.Spimi
 {
-    class BestMatchRanker : Concordia.Spimi.IRanker
+    class TfIdfRanker : Concordia.Spimi.IRanker
     {
         private TermIndex index;
         private IndexMetadata indexMetadata;
-        private BM25Scorer scorer;
+        private TfIdfScorer scorer;
 
-        public BestMatchRanker(TermIndex index, IndexMetadata indexMetadata)
+        public TfIdfRanker(TermIndex index, IndexMetadata indexMetadata)
         {
             this.index = index;
             this.indexMetadata = indexMetadata;
-            this.scorer = new BM25Scorer(index, indexMetadata);
+            this.scorer = new TfIdfScorer(index, indexMetadata);
         }
 
         public IList<long> Rank(string[] terms, IEnumerable<long> hits)

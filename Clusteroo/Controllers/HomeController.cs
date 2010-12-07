@@ -27,11 +27,11 @@ namespace Clusteroo.Controllers
             return Json(stats, JsonRequestBehavior.AllowGet);
         }
         
-        public JsonResult Query(string query)
+        public JsonResult Query(string query, string rankingMode)
         {
             Spimi spimi = (Spimi)Session["spimi"];
 
-            List<QueryResult> results = spimi.Query(query).ToList();
+            List<QueryResult> results = spimi.Query(query, rankingMode == "tf-idf" ? RankingMode.TFIDF : RankingMode.BM25).ToList();
             JsonResult res = Json(results, JsonRequestBehavior.AllowGet);
             return res;
         }

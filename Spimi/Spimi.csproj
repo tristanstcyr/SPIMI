@@ -95,8 +95,13 @@
     <Compile Include="CollectionMetadataWriter.cs" />
     <Compile Include="DocumentInfo.cs" />
     <Compile Include="DocumentInfoEncoder.cs" />
+    <Compile Include="IScorer.cs" />
+    <Compile Include="IRanker.cs" />
+    <Compile Include="RankingMode.cs" />
     <Compile Include="TermVector.cs" />
     <Compile Include="TermVectorEncoder.cs" />
+    <Compile Include="TfIdfRanker.cs" />
+    <Compile Include="TfIdfScorer.cs" />
     <Compile Include="WebCrawler.cs" />
     <Compile Include="HtmlParser.cs" />
     <Compile Include="IndexMetadata.cs" />
@@ -114,7 +119,7 @@
     <Compile Include="MemoryIndex.cs" />
     <Compile Include="PostingList.cs" />
     <Compile Include="ReutersReader.cs" />
-    <Compile Include="Scorer.cs" />
+    <Compile Include="BM25Scorer.cs" />
     <Compile Include="SpimiCli.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryEngine.cs" />

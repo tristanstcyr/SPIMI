@@ -10,9 +10,15 @@ using Clusteroo.Models;
 
 public class Spimi
 {
-    string directory = @"C:\Users\tristan\Downloads\";
-    string indexFilePath = @"C:\Users\tristan\Downloads\index";
-    string metadataFilePath = @"C:\Users\tristan\Downloads\metadataindex";
+    //string directory = @"C:\Users\tristan\Downloads\";
+    //string indexFilePath = @"C:\Users\tristan\Downloads\index";
+    //string metadataFilePath = @"C:\Users\tristan\Downloads\metadataindex";
+    //string directory = @"C:\dev\concordia\479\spimi\";
+    //string indexFilePath = @"C:\dev\concordia\479\spimi\index";
+    //string metadataFilePath = @"C:\dev\concordia\479\spimi\metadataindex";
+    string directory = @"C:\dev\concordia\479\spimi\";
+    string indexFilePath = @"C:\dev\concordia\479\spimi\index";
+    string metadataFilePath = @"C:\dev\concordia\479\spimi\metadataindex";
 
     public IndexingStats Index(string site)
     {
@@ -54,7 +60,7 @@ public class Spimi
         return result;
     }
 
-    public IList<QueryResult> Query(string query)
+    public IList<QueryResult> Query(string query, RankingMode rankingMode)
     {
         using (FileStream indexFileStream = File.Open(indexFilePath, FileMode.Open))
         {
@@ -64,11 +70,11 @@ public class Spimi
                 TermIndex index = new TermIndex(indexFileStream);
                 QueryEngine queryEngine = new QueryEngine(index, indexMetadata);
 
-                IList<long> results = queryEngine.Query(query.ToLower());
+                IList<long> results = queryEngine.Query(query.ToLower(), rankingMode);
                 IList<QueryResult> queryResults = new List<QueryResult>();
                 
                 int i = 1;
-                Console.WriteLine("rank\trsv score\ttitle");
+                Console.WriteLine("rank\tscore\ttitle");
                 foreach (long docId in results.Take(500))
                 {
                     DocumentInfo docInfo;

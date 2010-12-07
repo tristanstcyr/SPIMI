@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Concordia.Spimi
 {
-    class Scorer
+    class BM25Scorer : Concordia.Spimi.IScorer
     {
         private IndexMetadata indexMetadata;
         private TermIndex index;
@@ -14,7 +14,7 @@ namespace Concordia.Spimi
         private const double b = 0.75;   // document length scaler
         private double Lavg;
 
-        public Scorer(TermIndex index, IndexMetadata indexMetadata)
+        public BM25Scorer(TermIndex index, IndexMetadata indexMetadata)
         {
             this.index = index;
             this.indexMetadata = indexMetadata;

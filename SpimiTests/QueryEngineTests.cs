@@ -53,7 +53,7 @@ namespace Concordia.SpimiTests
         public void testQuery()
         {
             QueryEngine engine = new QueryEngine(index, metadata);
-            IList<long> foundPostings = engine.Query("foo bar");
+            IList<long> foundPostings = engine.Query("foo bar", RankingMode.TFIDF);
             IList<Posting> expectedPostings = postingsWithFoo.Union(postingsWithBar).ToList();
             foreach (Posting posting in expectedPostings)
             {

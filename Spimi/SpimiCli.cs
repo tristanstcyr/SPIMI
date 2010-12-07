@@ -90,7 +90,7 @@ namespace Concordia.Spimi
 
             public void ProcessQuery(string param)
             {
-                results = queryEngine.Query(param.ToLower());
+                results = queryEngine.Query(param.ToLower(), RankingMode.BM25);
                 this.PrintResults();
             }
 
