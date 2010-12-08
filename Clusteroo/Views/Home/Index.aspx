@@ -179,7 +179,7 @@
         enableFields(true);
     }
     else {
-        $("#cluster, #clusterBtn, #query, #queryBtn").attr("disabled", "disabled");
+        $("#cluster, #clusterBtn, #query, #queryBtn, #ranking").attr("disabled", "disabled");
     }
     </script>
  </asp:Content>
